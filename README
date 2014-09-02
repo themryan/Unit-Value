@@ -1,0 +1,31 @@
+*********************** UValue version 0.1.0a ***********************
+
+Welcome to UValue
+
+UValue is an attempt to make a unit value that will maintain its units across the most common arithmetic operations.  In addition I wanted something that would easily convert between units as well as work seamlessly in simple math operations.  
+
+Enjoy.	
+
+Usage:
+
+To create a UValue one passes the double value along with the explicit allocation of the desired unit class.  In this example I allocate via 'new' the DistanceUnit class.  Do not worry about deleting the class.  It will be managed by the UValue code and deleted when it is not needed anymore.
+
+UValue aUnitValue(0, new DistanceUnit("m"));
+
+To convert between allowable units in a single unit class simply use the square brackets and a character string of the desired unit's symbol.
+
+UValue aUnitValue(1, new DistanceUnit("m"));
+
+UValue newUnitValue = aUnitValue["cm"];
+
+cout << "New Unit: " << newUnitValue << endl;
+cout << "Old Unit: " << aUnitValue << endl;
+
+-- OUTPUT -- 
+
+New Unit: 100 cm
+Old Unit: 1 m
+
+The unit symbols are case sensitive.  And no accounting is made for whitespaces before or after the symbol.  So be sure of your unit strings.
+
+Outupt of the unit value is done by either the << symbol or by using the print method. 
