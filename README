@@ -2,13 +2,13 @@
 
 Welcome to UValue
 
-UValue is an attempt to make a unit value that will maintain its units across the most common arithmetic operations.  In addition I wanted something that would easily convert between units as well as work seamlessly in simple math operations.  
+UValue is an attempt to make a unit value that will maintain its units across the most common arithmetic operations.  In addition, I wanted something that would easily convert between like units, e.g. cm to ft.   
 
 Enjoy.	
 
 Usage:
 
-To create a UValue one passes the double value along with the explicit allocation of the desired unit class.  In this example I allocate via 'new' the DistanceUnit class.  Do not worry about deleting the class.  It will be managed by the UValue code and deleted when it is not needed anymore.
+To create a UValue one passes the double value along with the explicit allocation of the desired unit class.  In this example I allocate via 'new' the DistanceUnit class.  The unit class object is managed and deleted by the UValue object.  
 
 UValue aUnitValue(0, new DistanceUnit("m"));
 
