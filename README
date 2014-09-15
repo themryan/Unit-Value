@@ -2,7 +2,7 @@
 
 Welcome to Unit-Value
 
-Unit-Value is an attempt to make a unit value that will maintain its units across the most common arithmetic operations.  In addition, I wanted something that would easily convert between like units, e.g. cm to ft.   
+Unit-Value is an attempt to make a unit type that will maintain measured units across the most common arithmetic operations such as multiplication, division, addition, and subtraction.  In the case of addition and subtraction it will combine like unit combinations and in the case of dissimilar unit combinations it will create and manage the resulting polynomials.  In addition to the Unit-Value type, I wanted something that would easily convert between units from the same measurement type, i.e. cm to ft.  In this vein Unit-Value already contains conversions for many of the frequency, relative power, time, distance, temperature, current, volume, mass, force, pressure, energy, and power units
 
 Enjoy.	
 
