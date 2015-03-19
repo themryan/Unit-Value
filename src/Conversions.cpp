@@ -264,7 +264,7 @@ bool TimeConversion(double& value_in,
 
 
 /* Distance Units */
-const char *dists[] = {"fm", "Å", "nm", "um", "µm", "mm", "cm", "m", "km", "nmi", "mil", "in", "ft", "yd", "fathom", "rod", "chain", "furlong", "mi", "stat mi", "AU", "ly", "parsec"};
+const char *dists[] = {"fm", "A", "nm", "um", "µm", "mm", "cm", "m", "km", "nmi", "mil", "in", "ft", "yd", "fathom", "rod", "chain", "furlong", "mi", "stat mi", "AU", "ly", "parsec"};
 const int dists_len = sizeof(dists)/sizeof(char *);
 
 /*
@@ -274,7 +274,7 @@ bool DistanceConversion(double& value_in, int in, int out, const double * params
 {
     const double mfactors[] = {
         1e-15, // fm
-        1e-10, // Å
+        1e-10, // � - �ngstrom
         1e-9, // nm
         1e-6, //um
         1e-6, //µm
@@ -452,7 +452,7 @@ bool MassConversion(double& value_in, int in, int out, const double * params_lis
 {
 	double in_factor = 0;
 	double out_factor = 0;
-    /*                         "mg", "g", "kg", "Mg", "t", "lb", "troy", "gr", "scruple", "pennyweight", "dram", "oz", "troy oz", "carat", "stone", "slug", "hundredweight", "ton", "long ton"*/
+    /* "mg", "g", "kg", "Mg", "t", "lb", "troy", "gr", "scruple", "pennyweight", "dram", "oz", "troy oz", "carat", "stone", "slug", "hundredweight", "ton", "long ton"*/
 	const double factors[] = {
         .001, // mg
         1, //g
@@ -505,7 +505,7 @@ bool ForceConversion(double& value_in, int in, int out, const double * params_li
 {
 	double in_factor = 0;
 	double out_factor = 0;
-    /*                     "dyne", "N", "kg*m/s^2", "ozf", "lbf", "gmf", "kgf", "kip", "ton-force"*/
+    /* "dyne", "N", "kg*m/s^2", "ozf", "lbf", "gmf", "kgf", "kip", "ton-force"*/
 	const double factors[] = {1e-5, 1, 1, .27801, 4.4482, 9806.65, 9.80665, 4448.2, 8896.4};
     int factors_len = sizeof(factors)/sizeof(double);
     
