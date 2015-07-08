@@ -516,11 +516,12 @@ bool UnitGroup::foldInUnit(char oper, const UnitGroup &unit) {
                 {
                     switch(oper) {
                         case '*':
-                        au->exponent += au_in->exponent;
-                        break;
+							au->exponent += au_in->exponent;
+							break;
                         case '/':
-                        au->exponent -= au_in->exponent;
-                        break;
+							au->exponent -= au_in->exponent;
+							break;
+
                     }
                     
                     if ( au->exponent == 0 ) {
@@ -534,11 +535,11 @@ bool UnitGroup::foldInUnit(char oper, const UnitGroup &unit) {
                 
                 switch(oper) {
                     case '*':
-                    clone->exponent = au_in->exponent;
-                    break;
+						clone->exponent = au_in->exponent;
+						break;
                     case '/':
-                    clone->exponent = -au_in->exponent;
-                    break;
+						clone->exponent = -au_in->exponent;
+						break;
                 }
                 
                 _units[au_in->getName()] = clone;
@@ -546,22 +547,22 @@ bool UnitGroup::foldInUnit(char oper, const UnitGroup &unit) {
         } // for iter != unit.getUnits().end()
         switch (oper) {
             case '*':
-            _val *= conv_value;
-            break;
-            
+				_val *= conv_value;
+				break;
+
             case '/':
-            _val /= conv_value;
-            break;
+				_val /= conv_value;
+				break;
         }
     } // if ( unit.getUnits().size() && _units.size() )
     else {
         switch(oper) {
             case '*':
-            _val *= unit.getValue();
-            break;
+				_val *= unit.getValue();
+				break;
             case '/':
-            _val /= unit.getValue();
-            break;
+				_val /= unit.getValue();
+				break;
         }
     }
     
@@ -587,11 +588,11 @@ bool UnitGroup::sumUnits(char oper, const UnitGroup& unit) {
                                               , au->params_list, au->params_list_len ) ) {
                 switch(oper) {
                     case '+':
-                    _val += conv_value;
-                    break;
+						_val += conv_value;
+						break;
                     case '-':
-                    _val -= conv_value;
-                    break;
+						_val -= conv_value;
+						break;
                 }
             }
         }
@@ -709,16 +710,6 @@ UnitGroup UnitGroup::operator/(const double& val) const {
 ///-------------------------------------------------------------------------------------------------
 UnitGroup& UnitGroup::operator/=(const UnitGroup& unit) {
     this->foldInUnit('/', unit);
-    
-    return *this;
-}
-///-------------------------------------------------------------------------------------------------
-/// <summary>	Unit Group /=. </summary>
-///
-/// <remarks>	Michael Ryan, 5/11/2012. </remarks>
-///-------------------------------------------------------------------------------------------------
-UnitGroup& UnitGroup::operator%=(const UnitGroup& unit) {
-    this->foldInUnit('%', unit);
     
     return *this;
 }
@@ -1468,11 +1459,11 @@ bool UValue::foldIntoUnits(char oper, const UValue& val_in, bool simplify)
             {
                 switch(oper) {
                     case '*':
-                    *iter1 *= (*iter2);
-                    break;
+						*iter1 *= (*iter2);
+						break;
                     case '/':
-                    *iter1 /= (*iter2);
-                    break;
+						*iter1 /= (*iter2);
+						break;
                 }
                 
                 if ( simplify && (*iter1).getValue() == 0 ) {
@@ -1514,11 +1505,11 @@ bool UValue::sumInUnits(char oper, const UValue& units_in, bool simplify) {
             if ( (*iter1) == (*iter2) ) {
                 switch(oper) {
                     case '+':
-                    *iter1 += (*iter2);
-                    break;
+						*iter1 += (*iter2);
+						break;
                     case '-':
-                    *iter1 -= (*iter2);
-                    break;
+						*iter1 -= (*iter2);
+						break;
                 }
                 
                 value = (*iter1).getValue();
