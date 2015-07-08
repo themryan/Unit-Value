@@ -2,7 +2,9 @@
 
 Welcome to Unit-Value
 
-Unit-Value is an attempt to make a unit type that will maintain measured units across the most common arithmetic operations such as multiplication, division, addition, and subtraction.  In the case of addition and subtraction it will combine like unit combinations and in the case of dissimilar unit combinations it will create and manage the resulting polynomials.  In addition to the Unit-Value type, I wanted something that would easily convert between units from the same measurement type, i.e. cm to ft.  In this vein Unit-Value already contains conversions for many of the frequency, relative power, time, distance, temperature, current, volume, mass, force, pressure, energy, and power units
+Unit-Value is an attempt to make a unit type that will maintain measured units across the most common arithmetic operations such as multiplication, division, addition, and subtraction.  In the case of addition and subtraction it will combine like unit combinations and in the case of dissimilar unit combinations it will create and manage the resulting polynomials.  In addition to the Unit-Value type, I wanted something that would easily convert between units from the same measurement type, i.e. cm to ft.  In this vein Unit-Value already contains conversions for many of the typical frequency, relative power, time, distance, temperature, current, volume, mass, force, pressure, energy, and power units
+
+See src/Conversion.cpp for the current units and their abbreviations.
 
 Enjoy.	
 
@@ -28,4 +30,4 @@ Old Unit: 1 m
 
 The unit symbols are case sensitive.  And no accounting is made for whitespaces before or after the symbol.  So be sure of your unit strings.
 
-Outupt of the unit value is done by either the << symbol or by using the print method. 
+Printed output of the unit value is done by either the << symbol or by using the print method. 
