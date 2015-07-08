@@ -81,7 +81,7 @@ AtomicUnit::AtomicUnit(const char ** units_in,
         if ( params != nullptr && params_len > 0 ) {
             params_list = new double[params_len];
             params_list_len = params_len;
-            for(int i = 0; i < params_len; i++) {
+            for(int i = 0; i < params_len; ++i) {
                 params_list[i] = params[i];
             }
         }
@@ -104,7 +104,7 @@ AtomicUnit::AtomicUnit(const AtomicUnit& au)
     
     
     this->params_list = new double[au.params_list_len];
-    for(size_t i = 0; i < au.params_list_len; i++) {
+    for(size_t i = 0; i < au.params_list_len; ++i) {
         *(this->params_list+i) = *(au.params_list+i);
     }
     this->params_list_len = au.params_list_len;
@@ -181,7 +181,7 @@ bool AtomicUnit::sameUnits(const AtomicUnit * au) const {
     bool ret = false;
     if ( au->len_units == len_units ) {
         ret = true;
-        for(size_t i = 0; i < len_units; i++ ) {
+        for(size_t i = 0; i < len_units; ++i ) {
             ret &= (strlen(units[i]) == strlen(au->units[i]) && (STRCMP(au->units[i], units[i]) == 0));
         }
     }
@@ -265,7 +265,7 @@ const char * AtomicUnit::operator[] (const int index) const {
 int AtomicUnit::operator[] (const char * pszUnits) const {
     int ret = 0;
     if ( pszUnits && strlen(pszUnits) ) {
-        for(size_t i = 0; i < len_units; i++) {
+        for(size_t i = 0; i < len_units; ++i) {
             const char * unit = *(units+i);
             size_t len = strlen(pszUnits) ;
             if ( strlen(unit) == len
@@ -313,7 +313,7 @@ std::string AtomicUnit::printUnits(void) {
             out = this->cur_unit;
         }
         
-        if ( abs(this->exponent) > 1 ) {
+        if ( abs((int)this->exponent) > 1 ) {
             out += this->exponentChar + fabs(this->exponent);
         }
     }
@@ -356,7 +356,7 @@ std::ostream& operator<<(std::ostream& out, AtomicUnit * unit)
             out << unit->cur_unit;
         }
         
-		if ( abs(unit->exponent) > 1 ) {
+		if ( abs((int)unit->exponent) > 1 ) {
 			out << unit->exponentChar << fabs(unit->exponent);
 		}
 	}
@@ -425,7 +425,7 @@ UnitGroup::UnitGroup(double val, char oper, const MAP_ATOMIC_UNITS &units_in)
     : _val(val), _oper(oper) {
     // remember that one can not simply copy MAP_ATOMIC_UNITS yet
     // one must clone each unit key-value pair
-    for (MAP_ATOMIC_UNITS::const_iterator iter = units_in.begin() ; iter != units_in.end(); iter++) {
+    for (MAP_ATOMIC_UNITS::const_iterator iter = units_in.begin() ; iter != units_in.end(); ++iter) {
         this->_units[iter->second->getName()] = iter->second->clone();
     }
 }
@@ -439,7 +439,7 @@ UnitGroup::UnitGroup(const UnitGroup& unit_in)
     
     for(MAP_ATOMIC_UNITS::const_iterator iter = unit_in.getUnits().begin();
         iter != unit_in.getUnits().end();
-        iter++
+        ++iter
         )
     {
         if ( (*iter).second != nullptr ) {
@@ -466,7 +466,7 @@ int UnitGroup::compareUnits(const MAP_ATOMIC_UNITS& units_in) const {
     int ret = 0;
     
     if ( this->areUnitsEqual(units_in) ) {
-        ret = 0;
+        ret = 1;
     }
     
     return ret;
@@ -483,7 +483,7 @@ bool UnitGroup::areUnitsEqual(const MAP_ATOMIC_UNITS& units_in) const {
         ret = true;
         for(MAP_ATOMIC_UNITS::const_iterator iter = _units.begin();
             iter != _units.end();
-            iter++)
+            ++iter)
         {
             if ( units_in.find((*iter).first) != units_in.end() ) {
                 ret &= (*(*iter).second == units_in.at((*iter).first));
@@ -507,7 +507,7 @@ bool UnitGroup::foldInUnit(char oper, const UnitGroup &unit) {
     if ( unit.getUnits().size() && _units.size() ) {
         for(MAP_ATOMIC_UNITS::const_iterator iter = unit.getUnits().begin();
             iter != unit.getUnits().end();
-            iter++) {
+            ++iter) {
             AtomicUnit * au_in = iter->second;
             const std::string name = au_in->getName();
             if ( _units.count(name) == 1 ) {
@@ -579,7 +579,7 @@ bool UnitGroup::sumUnits(char oper, const UnitGroup& unit) {
     if ( *this == unit ) {
         for(MAP_ATOMIC_UNITS::const_iterator iter = unit.getUnits().begin();
             iter != unit.getUnits().end();
-            iter++)
+            ++iter)
         {
             const AtomicUnit * au = unit.getUnits().at((*iter).first);
             if ( ((*iter).second)->conversion(conv_value,  (*au)[au->cur_unit]
@@ -614,7 +614,7 @@ UnitGroup UnitGroup::pow(double exponent) const {
     
     for(MAP_ATOMIC_UNITS::iterator iter = new_units.begin();
         iter != new_units.end();
-        iter++)
+        ++iter)
     {
         iter->second->exponent = iter->second->exponent * exponent;
     }
@@ -783,7 +783,7 @@ UnitGroup UnitGroup::operator[](const char * pszNewUnits) const {
     double val_in = _val;
     for(MAP_ATOMIC_UNITS::const_iterator iter = ng.getUnits().begin();
         iter != ng.getUnits().end();
-        iter++)
+        ++iter)
     {
         AtomicUnit *au = (*iter).second;
         int index = (*au)[pszNewUnits];
@@ -870,7 +870,7 @@ void UnitGroup::deleteUnit(std::string id) {
 void UnitGroup::deleteAllUnits(void) {
     for(MAP_ATOMIC_UNITS::iterator iter = _units.begin();
         _units.size() && iter != _units.end();
-        iter++) {
+        ++iter) {
         
         if ( (*iter).second != nullptr ) {
             delete (*iter).second;
@@ -913,7 +913,7 @@ std::ostream& operator<<(std::ostream& out, const UnitGroup& units)
         
 		for(MAP_ATOMIC_UNITS::const_iterator iter = numerator.begin();
 			iter != numerator.end();
-			iter++)
+			++iter)
 		{
 			out << (AtomicUnit *)((*iter).second);
 			delete (*iter).second;
@@ -936,7 +936,7 @@ std::ostream& operator<<(std::ostream& out, const UnitGroup& units)
         
 		for(MAP_ATOMIC_UNITS::const_iterator iter = denominator.begin();
 			iter != denominator.end();
-			iter++)
+			++iter)
 		{
 			out << (AtomicUnit *)((*iter).second);
 			delete (*iter).second;
@@ -1002,12 +1002,7 @@ UValue::UValue(const UValue& val_in)
     const LIST_UNIT_GROUP& units_in = val_in.getUnits();
     
     this->_units.clear();
-    for(LIST_UNIT_GROUP::const_iterator iter = units_in.begin();
-        iter !=  units_in.end();
-        iter++)
-    {
-        this->_units.push_back(*iter);
-    }
+    this->_units = units_in;
 }
     
 ///-------------------------------------------------------------------------------------------------
@@ -1059,15 +1054,14 @@ double UValue::getValue(size_t termIndex) const {
 ///-------------------------------------------------------------------------------------------------
 std::list<double> UValue::getValues(void) const
 {
-    std::list<double> values;
-    
-    for( std::list<UnitGroup>::const_iterator iter = _units.begin();
+	std::list<double> values;
+    for( LIST_UNIT_GROUP::const_iterator iter = _units.begin();
         iter != _units.end();
-        iter++)
+        ++iter)
     {
         values.push_back((*iter).getValue());
     }
-    
+
     return values;
 }
 ///-------------------------------------------------------------------------------------------------
@@ -1120,11 +1114,11 @@ UValue UValue::roundTo(unsigned int num_of_digits) const {
         LIST_UNIT_GROUP new_units;
         for(LIST_UNIT_GROUP::const_iterator iter = this->_units.begin();
             iter != this->_units.end()
-            ; iter++)
+            ; ++iter)
         {
             new_units.push_back(iter->roundTo(num_of_digits));
         }
-        
+
         new_value.setUnits(new_units);
     }
     
@@ -1139,12 +1133,7 @@ UValue& UValue::operator=(const UValue& val_in) {
     const LIST_UNIT_GROUP& units_in = val_in.getUnits();
     
     this->_units.clear();
-    for(LIST_UNIT_GROUP::const_iterator iter = units_in.begin();
-        iter !=  units_in.end();
-        iter++)
-    {
-        this->_units.push_back(*iter);
-    }
+    this->_units = units_in;
     return *this;
 }
 ///-------------------------------------------------------------------------------------------------
@@ -1165,7 +1154,7 @@ bool UValue::operator==(const UValue& val_in) const {
             bool found = false;
             for(LIST_UNIT_GROUP::const_iterator iter = units_in.begin();
                 iter !=  units_in.end();
-                iter++)
+                ++iter)
             {
                 if ( (*iter) == (*self) ) {
                     if ( (*iter).getValue() == (*self).getValue() ) {
@@ -1301,7 +1290,7 @@ UValue& UValue::operator-=(const UValue& val) {
  
  for(LIST_UNIT_GROUP::const_iterator val_iter = val_units.begin();
  val_iter != val_units.end();
- val_iter++) {
+ ++val_iter) {
  LIST_UNIT_GROUP::const_iterator iter = _units.begin();
  bool are_equal = false;
  for(;
@@ -1334,14 +1323,15 @@ UValue& UValue::operator-=(const UValue& val) {
 UValue UValue::operator[](const char * pszNewUnits) const {
     UValue new_value = *this;
     LIST_UNIT_GROUP ngroups;
+
     for(LIST_UNIT_GROUP::const_iterator iter = _units.begin();
         iter != _units.end();
-        iter++)
+        ++iter)
     {
         const UnitGroup& ug = (*iter);
         ngroups.push_back(ug[pszNewUnits]);
     }
-    
+
     new_value.setUnits(ngroups);
     
     return new_value;
@@ -1368,7 +1358,7 @@ std::string UValue::print(int precision,
     if ( uni.size() ) {
         for(LIST_UNIT_GROUP::const_iterator iter = uni.begin();
             iter != uni.end();
-            iter++)
+            ++iter)
         {
             if ( !fFirst ) {
                 out << (*iter).getOper() << " ";
@@ -1397,7 +1387,7 @@ std::string UValue::printUnits(void) const {
     if ( this->_units.size() ) {
         for(LIST_UNIT_GROUP::const_iterator iter = this->_units.begin();
             iter != this->_units.end();
-            iter++)
+            ++iter)
         {
             const UnitGroup &ug = *iter;
             if ( !fFirst ) {
@@ -1431,12 +1421,12 @@ UValue UValue::pow(double exponent) const {
         {
             for(LIST_UNIT_GROUP::iterator iter1 = new_units.begin();
                 iter1 != new_units.end();
-                iter1++
+                ++iter1
                 )
             {
                 for(LIST_UNIT_GROUP::const_iterator iter2 = this->_units.begin();
                     iter2 != this->_units.end();
-                    iter2++
+                    ++iter2
                     )
                 {
                     *iter1 = (*iter1)*(*iter2);
@@ -1470,11 +1460,11 @@ bool UValue::foldIntoUnits(char oper, const UValue& val_in, bool simplify)
         LIST_UNIT_GROUP::iterator * deleteList = new LIST_UNIT_GROUP::iterator[_units.size()];
         for(LIST_UNIT_GROUP::iterator iter1 = _units.begin();
             iter1 != _units.end();
-            iter1++)
+            ++iter1)
         {
             for(LIST_UNIT_GROUP::const_iterator iter2 = unit_in.begin();
                 iter2 != unit_in.end();
-                iter2++)
+                ++iter2)
             {
                 switch(oper) {
                     case '*':
@@ -1515,11 +1505,11 @@ bool UValue::sumInUnits(char oper, const UValue& units_in, bool simplify) {
     LIST_UNIT_GROUP::iterator * deleteList = new LIST_UNIT_GROUP::iterator[units_copy.size()];
     for(LIST_UNIT_GROUP::iterator iter1 = _units.begin();
         iter1 != _units.end();
-        iter1++)
+        ++iter1)
     {
         for(LIST_UNIT_GROUP::iterator iter2 = units_copy.begin();
             iter2 != units_copy.end();
-            iter2++)
+            ++iter2)
         {
             if ( (*iter1) == (*iter2) ) {
                 switch(oper) {
@@ -1549,7 +1539,7 @@ bool UValue::sumInUnits(char oper, const UValue& units_in, bool simplify) {
         if ( _units.size() ) {
             for(LIST_UNIT_GROUP::iterator iter2 = units_copy.begin();
                 iter2 != units_copy.end();
-                iter2++) {
+                ++iter2) {
                 _units.push_back(*iter2);
                 (*iter2).setOper(oper);
             }
@@ -1570,7 +1560,7 @@ void UValue::deleteUnit(int i) {
     int j = 0;
     for(LIST_UNIT_GROUP::iterator iter = _units.begin();
         iter != _units.end() &&  j != i;
-        iter++, j++)
+        ++iter, ++j)
     {
         if ( j == i ) {
             _units.erase(iter);
