@@ -274,7 +274,7 @@ bool DistanceConversion(double& value_in, int in, int out, const double * params
 {
     const double mfactors[] = {
         1e-15, // fm
-        1e-10, // Å - Ångstrom
+        1e-10, // ÔøΩ - ÔøΩngstrom
         1e-9, // nm
         1e-6, //um
         1e-6, //¬µm
@@ -574,7 +574,7 @@ bool PressureConversion(double& value_in, int in, int out, const double * params
 }
 
 /* Energy Units */
-const char *energies[] = {"erg", "ton TNT", "J", "kg*m^2/s^2", "ft-lbf", "cal th", "cal 15", "cal st", "W-s", "W-h", "therm",
+const char *energies[] = {"erg", "ton TNT", "mJ", "J", "MJ", "kg*m^2/s^2", "ft-lbf", "cal th", "cal 15", "cal st", "W-s", "W-h", "therm",
     "therm US", "Btu th", "Btu 15", "Btu ST", "quad"};
 const int energies_len = sizeof(energies)/sizeof(char *);
 
@@ -590,7 +590,9 @@ bool EnergyConversion(double& value_in, int in, int out, const double * params_l
 	const double factors[] = {
         1e-7, // erg
         4.184e+9, // ton TNT
+		.001, // mJ
         1, // J
+		1e6, // MJ
         1, // kg*m^2/s^2
         1.3558, // ft-lbf
         4.184, // cal th
@@ -623,7 +625,7 @@ bool EnergyConversion(double& value_in, int in, int out, const double * params_l
 }
 
 /* Power Units */
-const char *powers[] = {"cal/s", "cal th/s", "erg/s", "ft-lbf/h", "Btu th/h", "Btu/h", "W", "metric hp", "hp", "electric hp"};
+const char *powers[] = {"cal/s", "cal th/s", "erg/s", "ft-lbf/h", "Btu th/h", "Btu/h", "mW", "W", "kW", "MW", "metric hp", "hp", "electric hp"};
 const int powers_len = sizeof(powers)/sizeof(char *);
 
 /*
@@ -642,7 +644,10 @@ bool PowerConversion(double& value_in, int in, int out, const double * params_li
         3.7662e-4, // ft-lbf/h
         .292875, // Btu th/h
         .293071, // Btu/h
+		.001, // mW
         1, // W
+		1e3, // kW
+		1e6, // MW
         735.50, // metric hp
         745.70, // hp
         746 // electric hp
