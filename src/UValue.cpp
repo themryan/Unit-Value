@@ -102,7 +102,7 @@ AtomicUnit::AtomicUnit(const AtomicUnit& au)
     this->cur_unit = au.cur_unit;
     this->cur_index = au.cur_index;
     
-    
+
     this->params_list = new double[au.params_list_len];
     for(size_t i = 0; i < au.params_list_len; ++i) {
         *(this->params_list+i) = *(au.params_list+i);

@@ -11,6 +11,8 @@
 #include <iostream>
 #include "UValue.h"
 
+using namespace std;
+
 int main(int argc, const char * argv[])
 {
 
@@ -19,8 +21,8 @@ int main(int argc, const char * argv[])
         int c_index = 0;
         const char * choices[] = {"Amplitude (Rel. Log) Unit", "Distance Unit", "Frequency Unit",
             "Time Unit", "Temperature Unit", "Electrical Current Unit", "Volume Unit",
-            "Mass Unit", "Force Unit", "Pressure Unit", "Energy Unit", "Power Unit"};
-        const char * def_units[] = { "dBm '50 Ohm Impedance'", "m", "MHz", "s", "C", "A", "m^3", "g", "N", "Pa", "J", "W" };
+            "Mass Unit", "Force Unit", "Pressure Unit", "Energy Unit", "Power Unit", "Angle Units"};
+        const char * def_units[] = { "dBm '50 Ohm Impedance'", "m", "MHz", "s", "C", "A", "m^3", "g", "N", "Pa", "J", "W", "deg" };
         std::cout << "Choose a unit:" << std::endl;
         for(int i = 0; i < sizeof(choices)/sizeof(char *)-1; i++) {
             std::cout << index++ << ". " << choices[c_index++] << std::endl;
@@ -108,7 +110,7 @@ int main(int argc, const char * argv[])
                                 case 1:
                                     if ( units_str.length() && !AmplUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[0];
+                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
                                         std::cout << std::endl;
                                         units_str = "dBm";
                                     }
@@ -118,13 +120,13 @@ int main(int argc, const char * argv[])
                                     }
                                 
                                     val = UValue(val_dbl, new AmplUnit(units_str.c_str()));
-                                    num_conv = ampls_len;
-                                    unit = ampls;
+                                    num_conv = AmplUnit::getUnitsLen();
+                                    unit = AmplUnit::getUnits();
                                     break;
                                 case 2:
                                     if ( units_str.length() && !DistUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[1];
+                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
                                         std::cout << std::endl;
                                         units_str = "m";
                                     }
@@ -134,13 +136,13 @@ int main(int argc, const char * argv[])
                                     }
                                     
                                     val = UValue(val_dbl, new DistUnit(units_str.c_str()));
-                                    num_conv = dists_len;
-                                    unit = dists;
+                                    num_conv = DistUnit::getUnitsLen();
+                                    unit = DistUnit::getUnits();
                                     break;
                                 case 3:
                                     if ( units_str.length() && !FrequencyUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[2];
+                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
                                         std::cout << std::endl;
                                         units_str = "MHz";
                                     }
@@ -150,13 +152,13 @@ int main(int argc, const char * argv[])
                                     }
                                     
                                     val = UValue(val_dbl, new FrequencyUnit(units_str.c_str()));
-                                    num_conv = freqs_len;
-                                    unit = freqs;
+                                    num_conv = FrequencyUnit::getUnitsLen();
+                                    unit = FrequencyUnit::getUnits();
                                     break;
                                 case 4:
                                     if ( units_str.length() && !TimeUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[3];
+                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
                                         std::cout << std::endl;
                                         units_str = "s";
                                     }
@@ -166,13 +168,13 @@ int main(int argc, const char * argv[])
                                     }
                                     
                                     val = UValue(val_dbl, new TimeUnit(units_str.c_str()));
-                                    num_conv = times_len;
-                                    unit = times;
+                                    num_conv = TimeUnit::getUnitsLen();
+                                    unit = TimeUnit::getUnits();
                                     break;
                                 case 5:
                                     if ( units_str.length() && !TempUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[4];
+                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
                                         std::cout << std::endl;
                                         units_str = "C";
                                     }
@@ -182,13 +184,13 @@ int main(int argc, const char * argv[])
                                     }
                                     
                                     val = UValue(val_dbl, new TempUnit(units_str.c_str()));
-                                    num_conv = temps_units_len;
-                                    unit = temps_units;
+                                    num_conv = TempUnit::getUnitsLen();
+                                    unit = TempUnit::getUnits();
                                     break;
                                 case 6:
                                     if ( units_str.length() && !CurrentUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[5];
+                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
                                         std::cout << std::endl;
                                         units_str = "A";
                                     }
@@ -198,13 +200,13 @@ int main(int argc, const char * argv[])
                                     }
                                     
                                     val = UValue(val_dbl, new CurrentUnit(units_str.c_str()));
-                                    num_conv = currents_len;
-                                    unit = currents;
+                                    num_conv = CurrentUnit::getUnitsLen();
+                                    unit = CurrentUnit::getUnits();
                                     break;
                                 case 7:
                                     if ( units_str.length() && !VolumeUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[6];
+                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
                                         std::cout << std::endl;
                                         units_str = "m^3";
                                     }
@@ -214,13 +216,13 @@ int main(int argc, const char * argv[])
                                     }
                                     
                                     val = UValue(val_dbl, new VolumeUnit(units_str.c_str()));
-                                    num_conv = volumes_len;
-                                    unit = volumes;
+                                    num_conv = VolumeUnit::getUnitsLen();
+                                    unit = VolumeUnit::getUnits();
                                     break;
                                 case 8:
                                     if ( units_str.length() && !MassUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[7];
+                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
                                         std::cout << std::endl;
                                         units_str = "g";
                                     }
@@ -230,13 +232,13 @@ int main(int argc, const char * argv[])
                                     }
                                     
                                     val = UValue(val_dbl, new MassUnit(units_str.c_str()));
-                                    num_conv = masses_len;
-                                    unit = masses;
+                                    num_conv = MassUnit::getUnitsLen();
+                                    unit = MassUnit::getUnits();
                                     break;
                                 case 9:
-                                    if ( units_str.length() && !MassUnit::isAllowableUnit(units_str.c_str()) )
+                                    if ( units_str.length() && !ForceUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[8];
+                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
                                         std::cout << std::endl;
                                         units_str = "N";
                                     }
@@ -246,13 +248,13 @@ int main(int argc, const char * argv[])
                                     }
                                     
                                     val = UValue(val_dbl, new ForceUnit(units_str.c_str()));
-                                    num_conv = forces_len;
-                                    unit = forces;
+                                    num_conv = ForceUnit::getUnitsLen();
+                                    unit = ForceUnit::getUnits();
                                     break;
                                 case 10:
                                     if ( units_str.length() && !PressureUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[9];
+                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
                                         std::cout << std::endl;
                                         units_str = "Pa";
                                     }
@@ -262,13 +264,13 @@ int main(int argc, const char * argv[])
                                     }
                                     
                                     val = UValue(val_dbl, new PressureUnit(units_str.c_str()));
-                                    num_conv = pressures_len;
-                                    unit = pressures;
+                                    num_conv = PressureUnit::getUnitsLen();
+                                    unit = PressureUnit::getUnits();
                                     break;
                                 case 11:
                                     if ( units_str.length() && !EnergyUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[10];
+                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
                                         std::cout << std::endl;
                                         units_str = "J";
                                     }
@@ -278,13 +280,13 @@ int main(int argc, const char * argv[])
                                     }
                                     
                                     val = UValue(val_dbl, new EnergyUnit(units_str.c_str()));
-                                    num_conv = energies_len;
-                                    unit = energies;
+                                    num_conv = EnergyUnit::getUnitsLen();
+                                    unit = EnergyUnit::getUnits();
                                     break;
                                 case 12:
                                     if ( units_str.length() && !PowerUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[10];
+                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
                                         std::cout << std::endl;
                                         units_str = "W";
                                     }
@@ -294,10 +296,27 @@ int main(int argc, const char * argv[])
                                     }
                                     
                                     val = UValue(val_dbl, new PowerUnit(units_str.c_str()));
-                                    num_conv = powers_len;
-                                    unit = powers;
+                                    num_conv = PowerUnit::getUnitsLen();
+                                    unit = PowerUnit::getUnits();
                                     break;
                                     
+                                case 13:
+									if ( units_str.length() && !AngleUnit::isAllowableUnit(units_str.c_str()) )
+									{
+										std::cout << units_str << " is not an allowable unit of " << choices[c-1];
+										std::cout << std::endl;
+										units_str = "deg";
+									}
+									else if ( !units_str.length() )
+									{
+										units_str = "deg";
+									}
+
+									val = UValue(val_dbl, new AngleUnit(units_str.c_str()));
+									num_conv = AngleUnit::getUnitsLen();
+									unit = AngleUnit::getUnits();
+									break;
+
                             }
                             
                             std::cout << std::endl;

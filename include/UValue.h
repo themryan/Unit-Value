@@ -40,6 +40,21 @@
 #define UVALUE_COMPARISON_NOT_DEFINED               0x00001
 #define UVALUE_OPER_NOT_POSSIBLE                    0x00002
 
+class UnitGroup;
+
+class Reducer
+{
+private:
+	const char ** reduce_chain;
+public:
+	Reducer(UnitGroup &ug) : reduce_chain(nullptr) {};
+	virtual ~Reducer();
+
+	virtual bool reducing_engine() = 0;
+	virtual std::string printValue() = 0;
+	virtual std::string printUnits() = 0;
+};
+
 
 ///-------------------------------------------------------------------------------------------------
 /// <summary>	Atomic Unit Class. </summary>
@@ -59,7 +74,10 @@ private:
     
     char * unit_name;
     
+    bool reduce;
+
 	UnitConversion conversion;
+
 public:
     static const char exponentChar = '^';
     
@@ -320,6 +338,12 @@ public:
 	/// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 	///-------------------------------------------------------------------------------------------------
 	UnitGroup roundTo(unsigned int num_of_digits) const;
+	///-------------------------------------------------------------------------------------------------
+	/// <summary>	Reduce to more legible units series </summary>
+	///
+	/// <remarks>	Michael Ryan, 4/25/2016. </remarks>
+	///-------------------------------------------------------------------------------------------------
+	UnitGroup& reduce(const char * units, const Reducer& rule);
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Unit Group Comparison. </summary>
     ///
@@ -1099,4 +1123,31 @@ public:
 	}
     STATIC_UNIT_MTHDS(pUNit, powers, powers_len);
 };
+
+///-------------------------------------------------------------------------------------------------
+/// <summary>	Angle Unit. </summary>
+///
+/// <remarks>	Michael Ryan, 5/11/2012. </remarks>
+///-------------------------------------------------------------------------------------------------
+class AngleUnit
+: public AtomicUnit
+{
+public:
+    AngleUnit(const char * cur_units="deg")
+    : AtomicUnit(angles, angles_len, AngleConversion, cur_units, "deg")
+    {
+        this->copyToName(typeid(*this).name());
+    }
+    
+    AngleUnit * create(void)
+    {
+        return new AngleUnit();
+    }
+    AngleUnit * clone(void) const
+    {
+        return new AngleUnit(*this);
+    }
+    STATIC_UNIT_MTHDS(pUNit, angles, angles_len);
+};
+
 

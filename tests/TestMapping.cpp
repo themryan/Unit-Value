@@ -241,7 +241,26 @@ int main(int argc, const char * argv[])
     std::cout << std::endl << std::endl;
     
     TestUnits<PowerUnit>();
+
+    std::cout << std::endl << std::endl;
+
+    std::cout << std::endl << "********* Distance Units ****";
+
+    std::cout << std::endl << std::endl;
+
+    TestUnits<DistUnit>();
+
+    std::cout << std::endl << std::endl;
+
+
+    std::cout << std::endl << "********* Angle Units ****";
+
+    std::cout << std::endl << std::endl;
+
+    TestUnits<AngleUnit>();
     
+    std::cout << std::endl << std::endl;
+
     return 0;
 }
 

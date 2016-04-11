@@ -16,12 +16,19 @@
 //              PressureConversion - conversion engine for units of pressure
 //              EnergyConversion - conversion engine for units of energy
 //              PowerConversion - conversion engine for units of power
+//              AngleConversion - conversion engine for angles
+//
 //              foundInUnits - utility function for finding the units
 //
 //
 //  Copyright (c) 2014 by Michael Ryan
 ///-------------------------------------------------------------------------------------------------
 
+#include <iostream>
+#include <sstream>
+#include <map>
+#include <list>
+#include <math.h>
 #include "Conversions.h"
 
 #ifdef WIN32
@@ -264,7 +271,7 @@ bool TimeConversion(double& value_in,
 
 
 /* Distance Units */
-const char *dists[] = {"fm", "A", "nm", "um", "µm", "mm", "cm", "m", "km", "nmi", "mil", "in", "ft", "yd", "fathom", "rod", "chain", "furlong", "mi", "stat mi", "AU", "ly", "parsec"};
+const char *dists[] = {"fm", "A", "nm", "um", "µm", "mm", "cm", "m", "km", "nmi", "mil", "1/64 in", "1/32 in", "1/16 in", "1/8 in", "1/4 in", "1/2 in", "in", "ft", "yd", "fathom", "rod", "chain", "furlong", "mi", "geo mi", "AU", "ly", "parsec"};
 const int dists_len = sizeof(dists)/sizeof(char *);
 
 /*
@@ -272,9 +279,10 @@ const int dists_len = sizeof(dists)/sizeof(char *);
  */
 bool DistanceConversion(double& value_in, int in, int out, const double * params_list, size_t params_list_len)
 {
+	const int startEnglish = 10;
     const double mfactors[] = {
         1e-15, // fm
-        1e-10, // � - �ngstrom
+        1e-10, // Angstrom
         1e-9, // nm
         1e-6, //um
         1e-6, //µm
@@ -283,7 +291,13 @@ bool DistanceConversion(double& value_in, int in, int out, const double * params
         1, // m
         1e3, // km
         1852, // nmi
-        2.54e-5, //mi
+        2.54e-5, //mil
+		.0254/64., // 1/64
+		.0254/32., // 1/32
+		.0254/16., // 1/16
+		.0254/8., // 1/8
+		.0254/4., // 1/4
+		.0254/2., // 1/2
         .0254, // in
         .3048, // ft
         .9144, // yd
@@ -292,18 +306,45 @@ bool DistanceConversion(double& value_in, int in, int out, const double * params
         20.1168, // chain
         201.168, // furlong
         1609.344, // mi
-        1609.3472, // stat mi
+        1828.8, // geo mi
         149598000000.0, // AU
         9.4605284e+15, // ly
         3.08567758e+16 // parsec
     };
     
+    const double efactors[] = {
+    	1/12000.0, //mil
+		1/768., // 1/64
+		1/384., // 1/32
+		1/192., // 1/16
+		1/96., // 1/8
+		1/48., // 1/4
+		1/24., // 1/2
+		1/12., //in
+		1.0, //ft
+		3.0, //yd
+		6., // fathom
+		16.5, //rod
+		66., //chain
+		660., //furlong
+		5280., // mile
+		6000., // geo mile
+    };
+    const int endEnglish = (sizeof(efactors)/sizeof(double))+startEnglish-1;
+
     int mfactors_len = sizeof(mfactors)/sizeof(double);
     
 	if ( in < 0 || out < 0 || in > mfactors_len || out > mfactors_len ) return false;
     
 	if ( in != out ) {
-		double factor = mfactors[in]/mfactors[out];
+		double factor = 0;
+		if(in >= startEnglish && in <= endEnglish
+				&& out >= startEnglish && out <= endEnglish) {
+			factor = efactors[in-startEnglish]/efactors[out-startEnglish];
+		}
+		else {
+			factor = mfactors[in]/mfactors[out];
+		}
 		value_in = factor*value_in;
 	}
 	
@@ -668,6 +709,52 @@ bool PowerConversion(double& value_in, int in, int out, const double * params_li
     
 	return !(ISNAN(value_in));
 }
+
+/* Angle Units */
+const char *angles[] = { "mil", "°", "deg", "'", "min", "\"", "sec",  "'''", "rad", "grad"};
+const int angles_len = sizeof(angles)/sizeof(char *);
+
+/*
+ Angle Conversion Engine
+ */
+
+bool AngleConversion(double& value_in, int in, int out, const double * params_list, size_t params_list_len)
+{
+    double in_factor = 0;
+    double out_factor = 0;
+    
+    const double factors[] = {
+    	1/6400.0, // mil
+        1.0, // °
+        1.0, // deg
+        1.0, // '
+        1/60., // min
+        1/60.0, // "
+        1/3600.0, // sec
+        1/3600.0, // '''
+        180./M_PI, // rad
+        90./100. // grad
+    };
+    
+    int factors_len = sizeof(factors)/sizeof(double);
+
+    if ( in >= factors_len || out >= factors_len ) return 0;
+
+    if (in != out) {
+        if ( in >= 0 ) {
+            in_factor = factors[in];
+        }
+        
+        if ( out >= 0 ) {
+            out_factor = factors[out];
+        }
+        
+        value_in = (in_factor*value_in)/out_factor;
+    }
+    
+    return !(ISNAN(value_in));
+}
+
 
 ///-------------------------------------------------------------------------------------------------
 /// <summary>	foundUnitInUnits - Searches units for pUnit </summary>

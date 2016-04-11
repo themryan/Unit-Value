@@ -17,14 +17,7 @@
 //
 //  Copyright (c) 2014 by Michael Ryan
 ///-------------------------------------------------------------------------------------------------
-
-#pragma once
-#include <iostream>
 #include <string.h>
-#include <sstream>
-#include <map>
-#include <list>
-#include <math.h>
 
 #ifndef _CONVERSIONS_H_
 #define _CONVERSIONS_H_
@@ -213,6 +206,19 @@ extern const int powers_len;
  */
 
 bool PowerConversion(double& value_in,
+                     int in,
+                     int out,
+                     const double * params_list,
+                     size_t params_list_len);
+
+extern const char *angles[];
+extern const int angles_len;
+
+/*
+ Angle Conversion engine
+ */
+
+bool AngleConversion(double& value_in,
                      int in,
                      int out,
                      const double * params_list,
