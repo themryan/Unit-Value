@@ -1,5 +1,5 @@
 ///-------------------------------------------------------------------------------------------------
-// file:	UValue.h 
+// file:	UValue.hpp
 //
 // summary:	Declares the UValue units class and the unit classes
 //				FrequencyUnit: Frequency units class
@@ -41,21 +41,60 @@
 #define UVALUE_OPER_NOT_POSSIBLE                    0x00002
 
 class UnitGroup;
+class AtomicUnit;
 
 class Reducer
 {
-private:
-	const char ** reduce_chain;
+protected:
+	UnitGroup &parent;
 public:
-	Reducer(UnitGroup &ug) : reduce_chain(nullptr) {};
+	Reducer(UnitGroup &ug) : parent(ug) {};
 	virtual ~Reducer();
 
-	virtual bool reducing_engine() = 0;
-	virtual std::string printValue() = 0;
-	virtual std::string printUnits() = 0;
+	UnitGroup &reduce();
 };
 
+class AtomicFormatter
+{
+protected:
+	AtomicUnit &parent;
+public:
+	AtomicFormatter(AtomicUnit &au) : parent(au) {};
+	virtual ~AtomicFormatter();
 
+	virtual std::string print(void) = 0;
+};
+/*
+class DegMinSec : public AtomicFormatter
+{
+private:
+	const char reduce_chain[3][4] = {"deg", "min", "sec"};
+	UnitGroup &parentGroup;
+public:
+	DegMinSec(UnitGroup &ug): parentGroup(ug) {this->parent(ug.getUnits()[AngleUnit().getName()]);}
+	~DegMinSec() {}
+
+	std::ostream &print(std::ostream &out) {
+
+		double val = 0.;
+		int ival = (int)val;
+
+		double remainder = val - ival;
+
+		out << ival;
+
+		val = remainder * 60.0;
+		ival = (int)val;
+
+		remainder = val - ival;
+
+		val = remainder * 60.0;
+		ival = (int)val;
+
+		return out;
+	}
+};
+*/
 ///-------------------------------------------------------------------------------------------------
 /// <summary>	Atomic Unit Class. </summary>
 ///
@@ -65,18 +104,20 @@ public:
 class AtomicUnit
 {
 private:
-    const char ** units;
+    const char *const* units;
 	size_t len_units;
 	int cur_index;
     
 	double * params_list;
 	size_t params_list_len;
     
-    char * unit_name;
-    
     bool reduce;
 
 	UnitConversion conversion;
+
+    size_t typeid_hash;
+protected:
+    
 
 public:
     static const char exponentChar = '^';
@@ -94,7 +135,7 @@ public:
     ///
     /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
     /// <parameters>
-    ///         units_in - ** char to allowable unit abbreviations
+    ///         units_in - *const* char to allowable unit abbreviations
     ///         len - number of abbreviations in units_in
     ///         UnitConversion - function pointer to conversion handler
     ///         current_unit - starting unit (abbrev. from units_in)
@@ -104,7 +145,7 @@ public:
     ///         params_list_len - number of parameters in params_list
     /// </parameters>
     ///-------------------------------------------------------------------------------------------------
-	explicit AtomicUnit(const char ** units_in, int len, UnitConversion unit_conv);
+	explicit AtomicUnit(const char *const* units_in, int len, UnitConversion unit_conv);
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Atomic Unit Constructor. </summary>
     ///
@@ -117,7 +158,7 @@ public:
     ///         default_unit - default unit abbrev.
     /// </parameters>
     ///-------------------------------------------------------------------------------------------------
-	explicit AtomicUnit(const char ** units_in,
+	explicit AtomicUnit(const char *const* units_in,
                         int len, UnitConversion unit_conv,
                         const char * current_unit,
                         const char * default_unit = nullptr,
@@ -134,12 +175,6 @@ public:
     /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
     ///-------------------------------------------------------------------------------------------------
 	virtual ~AtomicUnit(void);
-    ///-------------------------------------------------------------------------------------------------
-    /// <summary>	Atomic Unit Copy ID Name. </summary>
-    ///
-    /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
-    ///-------------------------------------------------------------------------------------------------
-	void copyToName(const char * name) ;
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Atomic Unit Create. </summary>
     ///
@@ -226,7 +261,7 @@ public:
     ///
     /// <remarks>	Michael Ryan, 6/11/20123 </remarks>
     ///-------------------------------------------------------------------------------------------------
-    const char * getName(void) ;
+    virtual const char * getName(void) const ;
 
 private:
     AtomicUnit& operator=(const AtomicUnit &unit_in);
@@ -264,6 +299,8 @@ private:
 	MAP_ATOMIC_UNITS _units;
 
 	friend class UnitGroup;
+	friend class Reducer;
+	friend class AtomicFormatter;
 	///-------------------------------------------------------------------------------------------------
 	/// <summary>	Unit Group Set Units. </summary>
 	///
@@ -344,6 +381,12 @@ public:
 	/// <remarks>	Michael Ryan, 4/25/2016. </remarks>
 	///-------------------------------------------------------------------------------------------------
 	UnitGroup& reduce(const char * units, const Reducer& rule);
+	///-------------------------------------------------------------------------------------------------
+	/// <summary>	Reduce to more legible units series </summary>
+	///
+	/// <remarks>	Michael Ryan, 4/25/2016. </remarks>
+	///-------------------------------------------------------------------------------------------------
+	UnitGroup& format(const char * units, const AtomicFormatter& format);
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Unit Group Comparison. </summary>
     ///
@@ -793,13 +836,12 @@ std::ostream& operator<<(std::ostream& out, const UValue& val);
 static bool isAllowableUnit(const char * pUnit) {                       \
     return foundUnitInUnits(pUnit, pUnitsArr, iUnitsArrLen);            \
 }                                                                       \
-static const char ** getUnits(void) {                                   \
+static const char *const* getUnits(void) {                              \
     return pUnitsArr;                                                   \
 }                                                                       \
 static int getUnitsLen(void) {                                          \
     return iUnitsArrLen;                                                \
-}
-
+}	
 
 ///-------------------------------------------------------------------------------------------------
 /// <summary>	Unit Value Frequency Unit. </summary>
@@ -814,7 +856,6 @@ public:
 	explicit FrequencyUnit(const char * cur_units = "MHz")
 		: AtomicUnit(freqs, freqs_len, FreqConversion, cur_units, "MHz") 
 	{
-		this->copyToName(typeid(*this).name());
 	}
 
 	FrequencyUnit * create() 
@@ -841,7 +882,6 @@ public:
 	explicit AmplUnit(const char * cur_units = "dBm")
 		: AtomicUnit(ampls, ampls_len, AmplConversion, cur_units, "dBm")
 	{
-		this->copyToName(typeid(*this).name());
 	}
 
 	AmplUnit * create(void)
@@ -876,7 +916,6 @@ public:
 	TimeUnit(const char * cur_units = "s")
 		: AtomicUnit(times, times_len, TimeConversion, cur_units, "s")
 	{
-		this->copyToName(typeid(*this).name());
 	}
 
 	TimeUnit * create(void)
@@ -902,7 +941,6 @@ public:
 	DistUnit(const char * cur_units = "m")
 		: AtomicUnit(dists, dists_len, DistanceConversion, cur_units, "m")
 	{
-		this->copyToName(typeid(*this).name());
 	}
 
 	DistUnit * create(void)
@@ -928,7 +966,6 @@ public:
 	TempUnit(const char * cur_units="C")
 		: AtomicUnit(temps_units, temps_units_len, TempConversion, cur_units, "C")
 	{
-		this->copyToName(typeid(*this).name());
 	}
 
 	TempUnit * create(void)
@@ -954,7 +991,6 @@ public:
 	CurrentUnit(const char * cur_units="A")
 		: AtomicUnit(currents, currents_len, CurrentConversion, cur_units, "A")
 	{
-		this->copyToName(typeid(*this).name());
 	}
 
 	CurrentUnit * create(void)
@@ -980,7 +1016,6 @@ public:
 	VolumeUnit(const char * cur_units="l")
         : AtomicUnit(volumes, volumes_len, VolumeConversion, cur_units, "l")
 	{
-		this->copyToName(typeid(*this).name());
 	}
     
 	VolumeUnit * create(void)
@@ -1006,7 +1041,6 @@ public:
 	MassUnit(const char * cur_units="g")
         : AtomicUnit(masses, masses_len, MassConversion, cur_units, "g")
 	{
-		this->copyToName(typeid(*this).name());
 	}
     
 	MassUnit * create(void)
@@ -1032,7 +1066,6 @@ public:
 	ForceUnit(const char * cur_units="N")
         : AtomicUnit(forces, forces_len, ForceConversion, cur_units, "N")
 	{
-		this->copyToName(typeid(*this).name());
 	}
     
 	ForceUnit * create(void)
@@ -1058,7 +1091,6 @@ public:
 	PressureUnit(const char * cur_units="Pa")
         : AtomicUnit(pressures, pressures_len, PressureConversion, cur_units, "Pa")
 	{
-		this->copyToName(typeid(*this).name());
 	}
     
 	PressureUnit * create(void)
@@ -1084,7 +1116,6 @@ public:
 	EnergyUnit(const char * cur_units="J")
         : AtomicUnit(energies, energies_len, EnergyConversion, cur_units, "J")
 	{
-		this->copyToName(typeid(*this).name());
 	}
     
 	EnergyUnit * create(void)
@@ -1110,7 +1141,6 @@ public:
 	PowerUnit(const char * cur_units="W")
         : AtomicUnit(powers, powers_len, PowerConversion, cur_units, "W")
 	{
-		this->copyToName(typeid(*this).name());
 	}
     
 	PowerUnit * create(void)
@@ -1136,7 +1166,6 @@ public:
     AngleUnit(const char * cur_units="deg")
     : AtomicUnit(angles, angles_len, AngleConversion, cur_units, "deg")
     {
-        this->copyToName(typeid(*this).name());
     }
     
     AngleUnit * create(void)

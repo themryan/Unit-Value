@@ -8,7 +8,8 @@
 //  Copyright (c) 2014 by Michael Ryan
 ///-------------------------------------------------------------------------------------------------
 
-#include "UValue.h"
+#include <typeinfo>
+#include "UValue.hpp"
 
 
 // ***********************  DEFINES for UValues  ***********************
@@ -39,10 +40,10 @@
 ///         params_list_len - number of parameters in params_list
 /// </parameters>
 ///-------------------------------------------------------------------------------------------------
-AtomicUnit::AtomicUnit(const char ** units_in, int len, UnitConversion unit_conv)
+AtomicUnit::AtomicUnit(const char *const* units_in, int len, UnitConversion unit_conv)
             : exponent(1), units(units_in), len_units(len)
             , params_list(nullptr), params_list_len(0)
-            , unit_name(nullptr), conversion(unit_conv), cur_unit(nullptr) {
+            , conversion(unit_conv), cur_unit(nullptr) {
     if ( units_in ) {
         cur_index = 0;
         def_unit = units_in[cur_index];
@@ -61,12 +62,12 @@ AtomicUnit::AtomicUnit(const char ** units_in, int len, UnitConversion unit_conv
 ///         default_unit - default unit abbrev.
 /// </parameters>
 ///-------------------------------------------------------------------------------------------------
-AtomicUnit::AtomicUnit(const char ** units_in,
+AtomicUnit::AtomicUnit(const char *const* units_in,
                     int len, UnitConversion unit_conv,
                     const char * current_unit,
                     const char * default_unit,
                     double * params, int params_len)
-            : params_list(nullptr), unit_name(nullptr), cur_unit(nullptr)
+            : params_list(nullptr), cur_unit(nullptr)
             , exponent(1), units(units_in), len_units(len), params_list_len(0)
             , conversion(unit_conv) {
     if ( len_units ) {
@@ -93,7 +94,7 @@ AtomicUnit::AtomicUnit(const char ** units_in,
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
 AtomicUnit::AtomicUnit(const AtomicUnit& au)
-    : params_list(nullptr), unit_name(nullptr), params_list_len(0) {
+    : params_list(nullptr), params_list_len(0) {
     this->exponent = au.exponent;
     this->units = au.units;
     this->len_units = au.len_units;
@@ -108,36 +109,15 @@ AtomicUnit::AtomicUnit(const AtomicUnit& au)
         *(this->params_list+i) = *(au.params_list+i);
     }
     this->params_list_len = au.params_list_len;
-    
-    copyToName(au.unit_name);
 }
 ///-------------------------------------------------------------------------------------------------
 /// <summary>	Atomic Unit Destructor. </summary>
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-AtomicUnit::~AtomicUnit(void) {
-    if ( unit_name ) {
-        delete [] unit_name;
-    }
-    
+AtomicUnit::~AtomicUnit(void) {    
     if ( params_list ) {
         delete [] params_list;
-    }
-}
-///-------------------------------------------------------------------------------------------------
-/// <summary>	Atomic Unit Copy ID Name. </summary>
-///
-/// <remarks>	Michael Ryan, 5/11/2012. </remarks>
-///-------------------------------------------------------------------------------------------------
-void AtomicUnit::copyToName(const char * name) {
-    if ( name != nullptr ) {
-        size_t len = strlen(name)+1;
-        unit_name = new char[len];
-        strncpy(unit_name, name, len);
-    }
-    else {
-        throw std::runtime_error("Unnamed unit!");
     }
 }
 
@@ -327,7 +307,7 @@ std::string AtomicUnit::printUnits(void) {
 /// <remarks>	Michael Ryan, 6/11/20123 </remarks>
 ///-------------------------------------------------------------------------------------------------
 bool AtomicUnit::sameUnitType(const AtomicUnit * unitToCompare) const {
-    return (STRCMP(this->unit_name, unitToCompare->unit_name) == 0);
+    return (STRCMP(this->getName(), unitToCompare->getName()) == 0);
 }
 
 ///-------------------------------------------------------------------------------------------------
@@ -335,8 +315,8 @@ bool AtomicUnit::sameUnitType(const AtomicUnit * unitToCompare) const {
 ///
 /// <remarks>	Michael Ryan, 6/11/20123 </remarks>
 ///-------------------------------------------------------------------------------------------------
-const char * AtomicUnit::getName(void) {
-    return this->unit_name;
+const char * AtomicUnit::getName(void) const {
+    return typeid(*this).name();
 }
     
 
@@ -373,7 +353,6 @@ std::ostream& operator<<(std::ostream& out, AtomicUnit * unit)
 ScalarUnit::ScalarUnit(void)
     : AtomicUnit(scalar, 1, IdentityConversion, "", "")
 {
-    copyToName(typeid(*this).name());
 }
 
 ScalarUnit * ScalarUnit::create(void)

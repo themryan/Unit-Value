@@ -35,7 +35,7 @@
 
 #endif
 
-bool foundUnitInUnits(const char * pUnit, const char ** units, const int units_len);
+bool foundUnitInUnits(const char * pUnit, const char *const* units, const int units_len);
 
 /*
  // This function pointer defines the format of the conversion class.
@@ -49,7 +49,7 @@ typedef bool (*UnitConversion)(
         const double * params_list,
         size_t params_list_len);
 
-extern const char *scalar[];
+extern const char *const scalar[];
 
 // Does nothing except test for isnan
 bool IdentityConversion(double& value_in,
@@ -58,7 +58,7 @@ bool IdentityConversion(double& value_in,
                             const double * params_list,
                             size_t params_list_len);
 
-extern const char *freqs[];
+extern const char *const freqs[];
 extern const int freqs_len;
 
 /*
@@ -70,7 +70,7 @@ bool FreqConversion(double& value_in,
                            const double * params_list,
                            size_t params_list_len);
 
-extern const char *times[];
+extern const char *const times[];
 extern const int times_len;
 
 /*
@@ -83,7 +83,7 @@ bool TimeConversion(double& value_in,
                        size_t params_list_len);
 
 
-extern const char *dists[];
+extern const char *const dists[];
 extern const int dists_len;
 
 /*
@@ -95,7 +95,7 @@ bool DistanceConversion(double& value_in,
                         const double * params_list,
                         size_t params_list_len);
 
-extern const char *ampls[] ;
+extern const char *const ampls[] ;
 extern const int ampls_len;
 
 /*
@@ -108,7 +108,7 @@ bool AmplConversion(double& value_in,
                     const double * params_list,
                     size_t params_list_len);
 
-extern const char *temps_units[];
+extern const char *const temps_units[];
 extern const int temps_units_len;
 
 /*
@@ -120,7 +120,7 @@ bool TempConversion(double& value_in,
                     const double * params_list,
                     size_t params_list_len);
 
-extern const char * currents[];
+extern const char *const currents[];
 extern const int currents_len;
 
 /*
@@ -133,7 +133,7 @@ bool CurrentConversion(double& value_in,
                        const double * params_list,
                        size_t params_list_len);
 
-extern const char * volumes[];
+extern const char *const volumes[];
 extern const int volumes_len;
 
 /*
@@ -146,7 +146,7 @@ bool VolumeConversion(double& value_in,
                       const double * params_list,
                       size_t params_list_len);
 
-extern const char * masses[];
+extern const char *const masses[];
 extern const int masses_len;
 
 /*
@@ -159,7 +159,7 @@ bool MassConversion(double& value_in,
                     const double * params_list,
                     size_t params_list_len);
 
-extern const char * forces[];
+extern const char *const forces[];
 extern const int forces_len;
 
 /*
@@ -172,7 +172,7 @@ bool ForceConversion(double& value_in,
                      const double * params_list,
                      size_t params_list_len);
 
-extern const char * pressures[];
+extern const char *const pressures[];
 extern const int pressures_len;
 
 /*
@@ -185,7 +185,7 @@ bool PressureConversion(double& value_in,
                         const double * params_list,
                         size_t params_list_len);
 
-extern const char * energies[];
+extern const char *const energies[];
 extern const int energies_len;
 
 /*
@@ -198,7 +198,7 @@ bool EnergyConversion(double& value_in,
                       const double * params_list,
                       size_t params_list_len);
 
-extern const char * powers[];
+extern const char *const powers[];
 extern const int powers_len;
 
 /*
@@ -211,7 +211,7 @@ bool PowerConversion(double& value_in,
                      const double * params_list,
                      size_t params_list_len);
 
-extern const char *angles[];
+extern const char *const angles[];
 extern const int angles_len;
 
 /*

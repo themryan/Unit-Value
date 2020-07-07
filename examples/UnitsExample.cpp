@@ -9,9 +9,21 @@
 
 #include <stdlib.h>
 #include <iostream>
-#include "UValue.h"
+#include "UValue.hpp"
 
 using namespace std;
+
+void print_allowable_units(const char *const* units, int len)
+{
+    std::cout << "Allowable units are: '";
+    std::cout << *units ;
+    for(int i = 0; i < len; i++)
+    {
+        std::cout << ", " << *(units+i);
+    }
+
+    std::cout << "'" << std::endl;
+}
 
 int main(int argc, const char * argv[])
 {
@@ -53,6 +65,7 @@ int main(int argc, const char * argv[])
                         std::string units_str;
                         std::string temp_unit;
                         std::cout << "Enter a value (default unit is " << def_units[c-1] << ")." << std::endl;
+                        std::cout << "Example: '1 " << def_units[c-1] << "'" << std::endl;
                         std::cin >> value_str;
                         int next_c = std::cin.peek();
                         int max_iters = 0;
@@ -103,16 +116,18 @@ int main(int argc, const char * argv[])
                             
                             UValue val;
                             int num_conv;
-                            const char **unit;
+                            const char *const*unit;
                             
                             switch (c) {
                                 default:
                                 case 1:
                                     if ( units_str.length() && !AmplUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
+                                        std::cout << "'" << units_str << "' is not an allowable abbrev of " << choices[c-1];
                                         std::cout << std::endl;
+                                        print_allowable_units(AmplUnit::getUnits(), AmplUnit::getUnitsLen());
                                         units_str = "dBm";
+                                        continue;
                                     }
                                     else if ( !units_str.length() )
                                     {
@@ -126,9 +141,11 @@ int main(int argc, const char * argv[])
                                 case 2:
                                     if ( units_str.length() && !DistUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
+                                        std::cout << "'" << units_str << "' is not an allowable abbrev of " << choices[c-1];
                                         std::cout << std::endl;
+                                        print_allowable_units(DistUnit::getUnits(), DistUnit::getUnitsLen());
                                         units_str = "m";
+                                        continue;
                                     }
                                     else if ( !units_str.length() )
                                     {
@@ -142,9 +159,11 @@ int main(int argc, const char * argv[])
                                 case 3:
                                     if ( units_str.length() && !FrequencyUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
+                                        std::cout << "'" << units_str << "' is not an allowable abbrev of " << choices[c-1];
                                         std::cout << std::endl;
+                                        print_allowable_units(FrequencyUnit::getUnits(), FrequencyUnit::getUnitsLen());
                                         units_str = "MHz";
+                                        continue;
                                     }
                                     else if ( !units_str.length() )
                                     {
@@ -158,9 +177,11 @@ int main(int argc, const char * argv[])
                                 case 4:
                                     if ( units_str.length() && !TimeUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
+                                        std::cout << "'" << units_str << "' is not an allowable abbrev of " << choices[c-1];
                                         std::cout << std::endl;
+                                        print_allowable_units(TimeUnit::getUnits(), TimeUnit::getUnitsLen());
                                         units_str = "s";
+                                        continue;
                                     }
                                     else if ( !units_str.length() )
                                     {
@@ -174,9 +195,11 @@ int main(int argc, const char * argv[])
                                 case 5:
                                     if ( units_str.length() && !TempUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
+                                        std::cout << "'" << units_str << "' is not an allowable abbrev of " << choices[c-1];
                                         std::cout << std::endl;
+                                        print_allowable_units(TempUnit::getUnits(), TempUnit::getUnitsLen());
                                         units_str = "C";
+                                        continue;
                                     }
                                     else if ( !units_str.length() )
                                     {
@@ -190,9 +213,11 @@ int main(int argc, const char * argv[])
                                 case 6:
                                     if ( units_str.length() && !CurrentUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
+                                        std::cout << "'" << units_str << "' is not an allowable abbrev of " << choices[c-1];
                                         std::cout << std::endl;
+                                        print_allowable_units(CurrentUnit::getUnits(), CurrentUnit::getUnitsLen());
                                         units_str = "A";
+                                        continue;
                                     }
                                     else if ( !units_str.length() )
                                     {
@@ -206,9 +231,11 @@ int main(int argc, const char * argv[])
                                 case 7:
                                     if ( units_str.length() && !VolumeUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
+                                        std::cout << "'" << units_str << "' is not an allowable abbrev of " << choices[c-1];
                                         std::cout << std::endl;
+                                        print_allowable_units(VolumeUnit::getUnits(), VolumeUnit::getUnitsLen());
                                         units_str = "m^3";
+                                        continue;
                                     }
                                     else if ( !units_str.length() )
                                     {
@@ -222,9 +249,11 @@ int main(int argc, const char * argv[])
                                 case 8:
                                     if ( units_str.length() && !MassUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
+                                        std::cout << "'" << units_str << "' is not an allowable abbrev of " << choices[c-1];
                                         std::cout << std::endl;
+                                        print_allowable_units(MassUnit::getUnits(), MassUnit::getUnitsLen());
                                         units_str = "g";
+                                        continue;
                                     }
                                     else if ( !units_str.length() )
                                     {
@@ -238,9 +267,11 @@ int main(int argc, const char * argv[])
                                 case 9:
                                     if ( units_str.length() && !ForceUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
+                                        std::cout << "'" << units_str << "' is not an allowable abbrev of " << choices[c-1];
                                         std::cout << std::endl;
+                                        print_allowable_units(ForceUnit::getUnits(), ForceUnit::getUnitsLen());
                                         units_str = "N";
+                                        continue;
                                     }
                                     else if ( !units_str.length() )
                                     {
@@ -254,9 +285,11 @@ int main(int argc, const char * argv[])
                                 case 10:
                                     if ( units_str.length() && !PressureUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
+                                        std::cout << "'" << units_str << "' is not an allowable abbrev of " << choices[c-1];
                                         std::cout << std::endl;
+                                        print_allowable_units(PressureUnit::getUnits(), PressureUnit::getUnitsLen());
                                         units_str = "Pa";
+                                        continue;
                                     }
                                     else if ( !units_str.length() )
                                     {
@@ -270,9 +303,11 @@ int main(int argc, const char * argv[])
                                 case 11:
                                     if ( units_str.length() && !EnergyUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
+                                        std::cout << "'" << units_str << "' is not an allowable abbrev of " << choices[c-1];
                                         std::cout << std::endl;
+                                        print_allowable_units(EnergyUnit::getUnits(), EnergyUnit::getUnitsLen());
                                         units_str = "J";
+                                        continue;
                                     }
                                     else if ( !units_str.length() )
                                     {
@@ -286,9 +321,11 @@ int main(int argc, const char * argv[])
                                 case 12:
                                     if ( units_str.length() && !PowerUnit::isAllowableUnit(units_str.c_str()) )
                                     {
-                                        std::cout << units_str << " is not an allowable unit of " << choices[c-1];
+                                        std::cout << "'" << units_str << "' is not an allowable abbrev of " << choices[c-1];
                                         std::cout << std::endl;
+                                        print_allowable_units(PowerUnit::getUnits(), PowerUnit::getUnitsLen());
                                         units_str = "W";
+                                        continue;
                                     }
                                     else if ( !units_str.length() )
                                     {
@@ -303,9 +340,11 @@ int main(int argc, const char * argv[])
                                 case 13:
 									if ( units_str.length() && !AngleUnit::isAllowableUnit(units_str.c_str()) )
 									{
-										std::cout << units_str << " is not an allowable unit of " << choices[c-1];
+										std::cout << "'" << units_str << "' is not an allowable abbrev of " << choices[c-1];
 										std::cout << std::endl;
+                                        print_allowable_units(AngleUnit::getUnits(), AngleUnit::getUnitsLen());
 										units_str = "deg";
+                                        continue;
 									}
 									else if ( !units_str.length() )
 									{

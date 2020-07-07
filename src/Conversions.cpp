@@ -41,7 +41,7 @@
 
 #endif
 
-const char *scalar[] = {""};
+const char *const scalar[] = {""};
 
 // Does nothing except test for isnan
 bool IdentityConversion(double& value_in,
@@ -55,7 +55,7 @@ bool IdentityConversion(double& value_in,
 
 
 /* Frequency Units */
-const char *freqs[] = {"Hz", "kHz", "MHz", "GHz"};
+const char *const freqs[] = {"Hz", "kHz", "MHz", "GHz"};
 const int freqs_len = sizeof(freqs)/sizeof(char *);
 
 /*
@@ -78,7 +78,7 @@ bool FreqConversion(double& value_in,
 // for future reference of use of dBmV/Hz values and dBmV/m values
 /* per x values e.g. /Hz and /m^2 are undefined.  In the future these will use the parameter list to define the extra parameter to calculate these values */
 
-const char *ampls[] = {"dBm", "dBmV", "dBuV", "dBmA", "dBuA", "dB", "V", "W", "A", "mV", "mW", "mA", "dBµV", "dBµA"};
+const char *const ampls[] = {"dBm", "dBmV", "dBuV", "dBmA", "dBuA", "dB", "V", "W", "A", "mV", "mW", "mA", "dBµV", "dBµA"};
 const int ampls_len = sizeof(ampls)/sizeof(char *);
 
 /*
@@ -210,7 +210,7 @@ bool AmplConversion(double& value_in, int in, int out, const double * params_lis
 
 
 /* Time Units */
-const char *times[] = {"fs", "ps", "ns", "us", "ms", "s", "min", "h", "day", "week", "wk", "µs"};
+const char *const times[] = {"fs", "ps", "ns", "us", "ms", "s", "min", "h", "day", "week", "wk", "µs"};
 const int times_len = sizeof(times)/sizeof(char *);
 
 
@@ -271,7 +271,7 @@ bool TimeConversion(double& value_in,
 
 
 /* Distance Units */
-const char *dists[] = {"fm", "A", "nm", "um", "µm", "mm", "cm", "m", "km", "nmi", "mil", "1/64 in", "1/32 in", "1/16 in", "1/8 in", "1/4 in", "1/2 in", "in", "ft", "yd", "fathom", "rod", "chain", "furlong", "mi", "geo mi", "AU", "ly", "parsec"};
+const char *const dists[] = {"fm", "A", "nm", "um", "µm", "mm", "cm", "m", "km", "nmi", "mil", "1/64 in", "1/32 in", "1/16 in", "1/8 in", "1/4 in", "1/2 in", "in", "ft", "yd", "fathom", "rod", "chain", "furlong", "mi", "geo mi", "league", "AU", "ly", "parsec"};
 const int dists_len = sizeof(dists)/sizeof(char *);
 
 /*
@@ -307,6 +307,7 @@ bool DistanceConversion(double& value_in, int in, int out, const double * params
         201.168, // furlong
         1609.344, // mi
         1828.8, // geo mi
+	    1609.344, // league 
         149598000000.0, // AU
         9.4605284e+15, // ly
         3.08567758e+16 // parsec
@@ -329,6 +330,7 @@ bool DistanceConversion(double& value_in, int in, int out, const double * params
 		660., //furlong
 		5280., // mile
 		6000., // geo mile
+		18228.3552 // league
     };
     const int endEnglish = (sizeof(efactors)/sizeof(double))+startEnglish-1;
 
@@ -352,7 +354,7 @@ bool DistanceConversion(double& value_in, int in, int out, const double * params
 }
 
 /* Temperature Units */
-const char *temps_units[] = {"K", "F", "C"};
+const char *const temps_units[] = {"K", "F", "C"};
 const int temps_units_len = sizeof(temps_units)/sizeof(char *);
 
 /*
@@ -388,7 +390,7 @@ bool TempConversion(double& value_in, int in, int out, const double * params_lis
 }
 
 /* Current Units */
-const char *currents[] = {"nA", "uA", "mA", "A", "C/s", "kA"};
+const char *const currents[] = {"nA", "uA", "mA", "A", "C/s", "kA"};
 const int currents_len = sizeof(currents)/sizeof(char *);
 
 /*
@@ -419,7 +421,7 @@ bool CurrentConversion(double& value_in, int in, int out, const double * params_
 }
 
 /* Volume Units */
-const char *volumes[] = {"ml", "cm^3", "l", "m^3", "stere", "ft^3", "in^3", "board ft", "acre-ft", "dram", "drop", "tsp", "tbsp", "oz", "jigger", "gill", "cup", "pt", "fifth", "qt", "gal", "wbbl" /* wine barrel*/, "bbl" /* barrel  US 42*/, "UK oz", "UK gill", "UK gal", "dry pt", "dry qt", "dry gal", "peck", "bushel"};
+const char *const volumes[] = {"ml", "cm^3", "l", "m^3", "stere", "ft^3", "in^3", "board ft", "acre-ft", "dram", "drop", "tsp", "tbsp", "oz", "jigger", "gill", "cup", "pt", "fifth", "qt", "gal", "wbbl" /* wine barrel*/, "bbl" /* barrel  US 42*/, "UK oz", "UK gill", "UK gal", "dry pt", "dry qt", "dry gal", "peck", "bushel"};
 const int volumes_len = sizeof(volumes)/sizeof(char *);
 
 /*
@@ -482,7 +484,7 @@ bool VolumeConversion(double& value_in, int in, int out, const double * params_l
 }
 
 /* Mass Units */
-const char *masses[] = {"mg", "g", "kg", "Mg", "t", "lb", "troy", "gr", "scruple", "pennyweight", "dram", "oz", "troy oz", "carat", "stone", "slug", "hundredweight", "ton", "long ton"};
+const char *const masses[] = {"mg", "g", "kg", "Mg", "t", "lb", "troy", "gr", "scruple", "pennyweight", "dram", "oz", "troy oz", "carat", "stone", "slug", "hundredweight", "ton", "long ton"};
 const int masses_len = sizeof(masses)/sizeof(char *);
 
 /*
@@ -535,7 +537,7 @@ bool MassConversion(double& value_in, int in, int out, const double * params_lis
 }
 
 /* Force Units */
-const char *forces[] = {"dyne", "N", "kg*m/s^2", "ozf", "lbf", "gmf", "kgf", "kip", "ton-force"};
+const char *const forces[] = {"dyne", "N", "kg*m/s^2", "ozf", "lbf", "gmf", "kgf", "kip", "ton-force"};
 const int forces_len = sizeof(forces)/sizeof(char *);
 
 /*
@@ -566,7 +568,7 @@ bool ForceConversion(double& value_in, int in, int out, const double * params_li
 }
 
 /* Pressure Units */
-const char *pressures[] = {"dyne/cm^2", "Pa", "torr", "N/cm^2", "mbar", "bar", "atm", "lbf/ft^2", "cm H20", "gmf/cm^2", "mm Hg", "cm Hg", "in H20", "in Hg", "lbf/in^2", "kgf/cm^2"};
+const char *const pressures[] = {"dyne/cm^2", "Pa", "torr", "N/cm^2", "mbar", "bar", "atm", "lbf/ft^2", "cm H20", "gmf/cm^2", "mm Hg", "cm Hg", "in H20", "in Hg", "lbf/in^2", "kgf/cm^2"};
 const int pressures_len = sizeof(pressures)/sizeof(char *);
 
 
@@ -615,7 +617,7 @@ bool PressureConversion(double& value_in, int in, int out, const double * params
 }
 
 /* Energy Units */
-const char *energies[] = {"erg", "ton TNT", "mJ", "J", "MJ", "kg*m^2/s^2", "ft-lbf", "cal th", "cal 15", "cal st", "W-s", "W-h", "therm",
+const char *const energies[] = {"erg", "ton TNT", "mJ", "J", "MJ", "kg*m^2/s^2", "ft-lbf", "cal th", "cal 15", "cal st", "W-s", "W-h", "therm",
     "therm US", "Btu th", "Btu 15", "Btu ST", "quad"};
 const int energies_len = sizeof(energies)/sizeof(char *);
 
@@ -666,7 +668,7 @@ bool EnergyConversion(double& value_in, int in, int out, const double * params_l
 }
 
 /* Power Units */
-const char *powers[] = {"cal/s", "cal th/s", "erg/s", "ft-lbf/h", "Btu th/h", "Btu/h", "mW", "W", "kW", "MW", "metric hp", "hp", "electric hp"};
+const char *const powers[] = {"cal/s", "cal th/s", "erg/s", "ft-lbf/h", "Btu th/h", "Btu/h", "mW", "W", "kW", "MW", "metric hp", "hp", "electric hp"};
 const int powers_len = sizeof(powers)/sizeof(char *);
 
 /*
@@ -711,7 +713,7 @@ bool PowerConversion(double& value_in, int in, int out, const double * params_li
 }
 
 /* Angle Units */
-const char *angles[] = { "mil", "°", "deg", "'", "min", "\"", "sec",  "'''", "rad", "grad"};
+const char *const angles[] = { "mil", "°", "deg", "'", "min", "\"", "sec",  "'''", "rad", "grad"};
 const int angles_len = sizeof(angles)/sizeof(char *);
 
 /*
@@ -767,7 +769,7 @@ bool AngleConversion(double& value_in, int in, int out, const double * params_li
 /// </parameters>
 ///-------------------------------------------------------------------------------------------------
 
-bool foundUnitInUnits(const char * pUnit, const char ** units, const int units_len)
+bool foundUnitInUnits(const char * pUnit, const char *const* units, const int units_len)
 {
     bool bFound = false;
     

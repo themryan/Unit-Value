@@ -9,7 +9,7 @@
 ///-------------------------------------------------------------------------------------------------
 
 #include <iostream>
-#include "UValue.h"
+#include "UValue.hpp"
 
 // Main test units engine
 // template class here assumes UValue here has getUnits method implemented
