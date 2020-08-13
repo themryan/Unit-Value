@@ -24,8 +24,8 @@ bool TestUnits()
     
     for(int i = 0; i < T::getUnitsLen(); i++)
     {
-        double bigORsmall = rand();
-        double randNum = ((double)rand()/RAND_MAX) - .5;
+        double_uv bigORsmall = rand();
+        double_uv randNum = ((double_uv)rand()/RAND_MAX) - .5;
         if ( bigORsmall > RAND_MAX/2 )
         {
             randNum = RAND_MAX*randNum;
@@ -106,7 +106,7 @@ int main(int argc, const char * argv[])
     
     int sig_figs = 14;
     
-    //double epsilon = std::numeric_limits<double>::epsilon();
+    //double_uv epsilon = std::numeric_limits<double_uv>::epsilon();
     
     std::cout << std::endl << std::endl << "**** Relative Power Units ****" << std::endl ;
     
@@ -116,7 +116,7 @@ int main(int argc, const char * argv[])
         
         for(int i = 0; i < ampls_len; i++)
         {
-            UValue original(1.0*((double)rand()/RAND_MAX), new AmplUnit(ampls[i]));
+            UValue original(1.0*((double_uv)rand()/RAND_MAX), new AmplUnit(ampls[i]));
             
             if ( ampls[i][0] != 'W' && ampls[i][0] != 'V' && ampls[i][0] != 'm' )
             {

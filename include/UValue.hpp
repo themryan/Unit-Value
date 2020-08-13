@@ -27,9 +27,9 @@
 #include <math.h>
 #include "Conversions.h"
 
-#ifndef _UVALUE_H_
-#define _UVALUE_H_
-#endif
+#ifndef __UVALUE_H__
+#define __UVALUE_H__
+
 
 #define MAP_ATOMIC_UNITS	std::map<std::string, AtomicUnit*>
 #define LIST_UNIT_GROUP		std::list<UnitGroup>
@@ -76,10 +76,10 @@ public:
 
 	std::ostream &print(std::ostream &out) {
 
-		double val = 0.;
+		double_uv val = 0.;
 		int ival = (int)val;
 
-		double remainder = val - ival;
+		double_uv remainder = val - ival;
 
 		out << ival;
 
@@ -108,7 +108,7 @@ private:
 	size_t len_units;
 	int cur_index;
     
-	double * params_list;
+	double_uv * params_list;
 	size_t params_list_len;
     
     bool reduce;
@@ -162,7 +162,7 @@ public:
                         int len, UnitConversion unit_conv,
                         const char * current_unit,
                         const char * default_unit = nullptr,
-                        double * params = nullptr, int params_len = 0);
+                        double_uv * params = nullptr, int params_len = 0);
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Atomic Unit Copy Constructor. </summary>
     ///
@@ -193,7 +193,7 @@ public:
     ///
     /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
     ///-------------------------------------------------------------------------------------------------
-	bool convert (double& value_in, int unit_index_out);
+	bool convert (double_uv& value_in, int unit_index_out);
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Atomic Unit Test for Identical Units. </summary>
     ///
@@ -205,25 +205,25 @@ public:
     ///
     /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
     ///-------------------------------------------------------------------------------------------------
-	void setParams(double * params, size_t params_len);
+	void setParams(double_uv * params, size_t params_len);
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Atomic Unit Get Parameters List. </summary>
     ///
     /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
     ///-------------------------------------------------------------------------------------------------
-    const double * getParams(void);
+    const double_uv * getParams(void);
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Atomic Unit Set Parameter in Parameters List. </summary>
     ///
     /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
     ///-------------------------------------------------------------------------------------------------
-	void setParam(double param, size_t index);
+	void setParam(double_uv param, size_t index);
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Atomic Unit Get Parameter in Parameters List. </summary>
     ///
     /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
     ///-------------------------------------------------------------------------------------------------
-    double getParam(size_t index);
+    double_uv getParam(size_t index);
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	[] Operator by index. </summary>
     ///
@@ -294,7 +294,7 @@ public:
 class UnitGroup {
 private:
     // parameters of UnitGroup
-    double _val;
+    double_uv _val;
     char _oper;
 	MAP_ATOMIC_UNITS _units;
 
@@ -343,13 +343,13 @@ public:
     ///         op - operator relation to other unit groups
     /// </parameters>
     ///-------------------------------------------------------------------------------------------------
-	UnitGroup(double val, AtomicUnit * unit = nullptr, char op = 0);
+	UnitGroup(double_uv val, AtomicUnit * unit = nullptr, char op = 0);
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Unit Group Copy Constructor. </summary>
     ///
     /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
     ///-------------------------------------------------------------------------------------------------
-	UnitGroup(double val, char oper, const MAP_ATOMIC_UNITS &units_in);
+	UnitGroup(double_uv val, char oper, const MAP_ATOMIC_UNITS &units_in);
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Unit Group Copy Constructor. </summary>
     ///
@@ -400,11 +400,11 @@ public:
     ///-------------------------------------------------------------------------------------------------
 	UnitGroup operator*(const UnitGroup& unit) const;
     ///-------------------------------------------------------------------------------------------------
-    /// <summary>	Unit Group Multiplication Double. </summary>
+    /// <summary>	Unit Group Multiplication double_uv. </summary>
     ///
     /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
     ///-------------------------------------------------------------------------------------------------
-	UnitGroup operator*(const double& val) const;
+	UnitGroup operator*(const double_uv& val) const;
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Unit Group *=. </summary>
     ///
@@ -418,11 +418,11 @@ public:
     ///-------------------------------------------------------------------------------------------------
 	UnitGroup operator/(const UnitGroup& unit) const;
     ///-------------------------------------------------------------------------------------------------
-    /// <summary>	Unit Group Division double. </summary>
+    /// <summary>	Unit Group Division double_uv. </summary>
     ///
     /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
     ///-------------------------------------------------------------------------------------------------
-	UnitGroup operator/(const double& val) const;
+	UnitGroup operator/(const double_uv& val) const;
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Unit Group /=. </summary>
     ///
@@ -482,13 +482,13 @@ public:
     ///
     /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
     ///-------------------------------------------------------------------------------------------------
-    double getValue(void) const;
+    double_uv getValue(void) const;
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Unit Group Set Value. </summary>
     ///
     /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
     ///-------------------------------------------------------------------------------------------------
-    void setValue(double value);
+    void setValue(double_uv value);
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Unit Group Get Oper. </summary>
     ///
@@ -549,7 +549,7 @@ public:
     ///         unit - Unit pointer (Unit Value will manage this object from now on.  Do not delete.)
     /// </parameters>
     ///-------------------------------------------------------------------------------------------------
-	UValue(double init_val, AtomicUnit * unit = nullptr);
+	UValue(double_uv init_val, AtomicUnit * unit = nullptr);
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Unit Value Constructor. </summary>
     ///
@@ -559,7 +559,7 @@ public:
     ///         unit - Unit pointer (Unit Value will manage this object from now on.  Do not delete.)
     /// </parameters>
     ///-------------------------------------------------------------------------------------------------
-	UValue(double init_val, const LIST_UNIT_GROUP &group_in);
+	UValue(double_uv init_val, const LIST_UNIT_GROUP &group_in);
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Unit Value Copy Constructor. </summary>
     ///
@@ -590,19 +590,19 @@ public:
     ///
     /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
     ///-------------------------------------------------------------------------------------------------
-	double getValue(size_t termIndex = 0) const;
+	double_uv getValue(size_t termIndex = 0) const;
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Unit Value Get List of Polynomial Parameters. </summary>
     ///
     /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
     ///-------------------------------------------------------------------------------------------------
-	std::list<double> getValues(void) const;
+	std::list<double_uv> getValues(void) const;
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Unit Value Set First Polynomial Value. </summary>
     ///
     /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
     ///-------------------------------------------------------------------------------------------------
-	void setValue(double val);
+	void setValue(double_uv val);
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Unit Value Get First Unit. </summary>
     ///
@@ -652,11 +652,11 @@ public:
     ///-------------------------------------------------------------------------------------------------
 	UValue operator*(const UValue& val) const;
     ///-------------------------------------------------------------------------------------------------
-    /// <summary>	Unit Value Multiplication Double. </summary>
+    /// <summary>	Unit Value Multiplication double_uv. </summary>
     ///
     /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
     ///-------------------------------------------------------------------------------------------------
-	UValue operator*(const double& val) const;
+	UValue operator*(const double_uv& val) const;
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Unit Value Division. </summary>
     ///
@@ -664,11 +664,11 @@ public:
     ///-------------------------------------------------------------------------------------------------
 	UValue operator/(const UValue& val) const;
     ///-------------------------------------------------------------------------------------------------
-    /// <summary>	Unit Value Division Double. </summary>
+    /// <summary>	Unit Value Division double_uv. </summary>
     ///
     /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
     ///-------------------------------------------------------------------------------------------------
-	UValue operator/(const double& val) const;
+	UValue operator/(const double_uv& val) const;
     ///-------------------------------------------------------------------------------------------------
     /// <summary>	Unit Value Addition. </summary>
     ///
@@ -800,25 +800,25 @@ private:
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-UValue operator*(double val1, const UValue& val2);
+UValue operator*(double_uv val1, const UValue& val2);
 ///-------------------------------------------------------------------------------------------------
 /// <summary>	Unit Value Addition. </summary>
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-UValue operator+(double val1, const UValue& val2);
+UValue operator+(double_uv val1, const UValue& val2);
 ///-------------------------------------------------------------------------------------------------
 /// <summary>	Unit Value Subtraction. </summary>
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-UValue operator-(double val1, const UValue& val2);
+UValue operator-(double_uv val1, const UValue& val2);
 ///-------------------------------------------------------------------------------------------------
 /// <summary>	Unit Value Division. </summary>
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-UValue operator/(double val1, const UValue& val2);
+UValue operator/(double_uv val1, const UValue& val2);
 ///-------------------------------------------------------------------------------------------------
 /// <summary>	Unit Value <<. </summary>
 ///
@@ -893,11 +893,11 @@ public:
 	{
 		return new AmplUnit(*this);
 	}
-    void setImpedance(double impedance)
+    void setImpedance(double_uv impedance)
     {
         this->setParam(impedance, 0);
     }
-    double getImpedance(void)
+    double_uv getImpedance(void)
     {
         return this->getParam(0);
     }
@@ -1180,3 +1180,4 @@ public:
 };
 
 
+#endif //__UVALUE_H__

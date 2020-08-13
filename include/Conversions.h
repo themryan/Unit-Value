@@ -19,9 +19,8 @@
 ///-------------------------------------------------------------------------------------------------
 #include <string.h>
 
-#ifndef _CONVERSIONS_H_
-#define _CONVERSIONS_H_
-#endif
+#ifndef __CONVERSIONS_H__
+#define __CONVERSIONS_H__
 
 #ifdef UNITS_CASE_INSENSITIVE
 
@@ -35,6 +34,12 @@
 
 #endif
 
+#ifdef UV_USE_LONG_DOUBLE
+typedef long double double_uv;
+#else
+typedef double double_uv;
+#endif
+
 bool foundUnitInUnits(const char * pUnit, const char *const* units, const int units_len);
 
 /*
@@ -43,19 +48,19 @@ bool foundUnitInUnits(const char * pUnit, const char *const* units, const int un
  */
 
 typedef bool (*UnitConversion)(
-        double& value_in,
+        double_uv& value_in,
         int unit_index_in,
         int unit_index_out,
-        const double * params_list,
+        const double_uv * params_list,
         size_t params_list_len);
 
 extern const char *const scalar[];
 
 // Does nothing except test for isnan
-bool IdentityConversion(double& value_in,
+bool IdentityConversion(double_uv& value_in,
                             int in,
                             int out,
-                            const double * params_list,
+                            const double_uv * params_list,
                             size_t params_list_len);
 
 extern const char *const freqs[];
@@ -64,10 +69,10 @@ extern const int freqs_len;
 /*
     Frequency Conversion engine
  */
-bool FreqConversion(double& value_in,
+bool FreqConversion(double_uv& value_in,
                            int in,
                            int out,
-                           const double * params_list,
+                           const double_uv * params_list,
                            size_t params_list_len);
 
 extern const char *const times[];
@@ -76,10 +81,10 @@ extern const int times_len;
 /*
  Time Conversion engine
  */
-bool TimeConversion(double& value_in,
+bool TimeConversion(double_uv& value_in,
                        int in,
                        int out,
-                       const double * params_list,
+                       const double_uv * params_list,
                        size_t params_list_len);
 
 
@@ -89,10 +94,10 @@ extern const int dists_len;
 /*
  Distance Conversion engine
  */
-bool DistanceConversion(double& value_in,
+bool DistanceConversion(double_uv& value_in,
                         int in,
                         int out,
-                        const double * params_list,
+                        const double_uv * params_list,
                         size_t params_list_len);
 
 extern const char *const ampls[] ;
@@ -102,10 +107,10 @@ extern const int ampls_len;
  Power Conversion engine
  */
 //{"dBm", "dBmV", "dBuV", "dBmA", "dBuA", "dB", "V", "W", "A", "mV", "mW", "mA"};
-bool AmplConversion(double& value_in,
+bool AmplConversion(double_uv& value_in,
                     int in,
                     int out,
-                    const double * params_list,
+                    const double_uv * params_list,
                     size_t params_list_len);
 
 extern const char *const temps_units[];
@@ -114,10 +119,10 @@ extern const int temps_units_len;
 /*
  Temp Conversion engine
  */
-bool TempConversion(double& value_in,
+bool TempConversion(double_uv& value_in,
                     int in,
                     int out,
-                    const double * params_list,
+                    const double_uv * params_list,
                     size_t params_list_len);
 
 extern const char *const currents[];
@@ -127,10 +132,10 @@ extern const int currents_len;
  Current Conversion engine
  */
 
-bool CurrentConversion(double& value_in,
+bool CurrentConversion(double_uv& value_in,
                        int in,
                        int out,
-                       const double * params_list,
+                       const double_uv * params_list,
                        size_t params_list_len);
 
 extern const char *const volumes[];
@@ -140,10 +145,10 @@ extern const int volumes_len;
  Volume Conversion engine
  */
 
-bool VolumeConversion(double& value_in,
+bool VolumeConversion(double_uv& value_in,
                       int in,
                       int out,
-                      const double * params_list,
+                      const double_uv * params_list,
                       size_t params_list_len);
 
 extern const char *const masses[];
@@ -153,10 +158,10 @@ extern const int masses_len;
  Mass Conversion engine
  */
 
-bool MassConversion(double& value_in,
+bool MassConversion(double_uv& value_in,
                     int in,
                     int out,
-                    const double * params_list,
+                    const double_uv * params_list,
                     size_t params_list_len);
 
 extern const char *const forces[];
@@ -166,10 +171,10 @@ extern const int forces_len;
  Force Conversion engine
  */
 
-bool ForceConversion(double& value_in,
+bool ForceConversion(double_uv& value_in,
                      int in,
                      int out,
-                     const double * params_list,
+                     const double_uv * params_list,
                      size_t params_list_len);
 
 extern const char *const pressures[];
@@ -179,10 +184,10 @@ extern const int pressures_len;
  Pressure Conversion engine
  */
 
-bool PressureConversion(double& value_in,
+bool PressureConversion(double_uv& value_in,
                         int in,
                         int out,
-                        const double * params_list,
+                        const double_uv * params_list,
                         size_t params_list_len);
 
 extern const char *const energies[];
@@ -192,10 +197,10 @@ extern const int energies_len;
  Energy Conversion engine
  */
 
-bool EnergyConversion(double& value_in,
+bool EnergyConversion(double_uv& value_in,
                       int in,
                       int out,
-                      const double * params_list,
+                      const double_uv * params_list,
                       size_t params_list_len);
 
 extern const char *const powers[];
@@ -205,10 +210,10 @@ extern const int powers_len;
  Power Conversion engine
  */
 
-bool PowerConversion(double& value_in,
+bool PowerConversion(double_uv& value_in,
                      int in,
                      int out,
-                     const double * params_list,
+                     const double_uv * params_list,
                      size_t params_list_len);
 
 extern const char *const angles[];
@@ -218,11 +223,11 @@ extern const int angles_len;
  Angle Conversion engine
  */
 
-bool AngleConversion(double& value_in,
+bool AngleConversion(double_uv& value_in,
                      int in,
                      int out,
-                     const double * params_list,
+                     const double_uv * params_list,
                      size_t params_list_len);
 
 
-
+#endif // __CONVERSIONS_H__

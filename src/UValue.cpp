@@ -66,7 +66,7 @@ AtomicUnit::AtomicUnit(const char *const* units_in,
                     int len, UnitConversion unit_conv,
                     const char * current_unit,
                     const char * default_unit,
-                    double * params, int params_len)
+                    double_uv * params, int params_len)
             : params_list(nullptr), cur_unit(nullptr)
             , exponent(1), units(units_in), len_units(len), params_list_len(0)
             , conversion(unit_conv) {
@@ -80,7 +80,7 @@ AtomicUnit::AtomicUnit(const char *const* units_in,
         }
         
         if ( params != nullptr && params_len > 0 ) {
-            params_list = new double[params_len];
+            params_list = new double_uv[params_len];
             params_list_len = params_len;
             for(int i = 0; i < params_len; ++i) {
                 params_list[i] = params[i];
@@ -104,7 +104,7 @@ AtomicUnit::AtomicUnit(const AtomicUnit& au)
     this->cur_index = au.cur_index;
     
 
-    this->params_list = new double[au.params_list_len];
+    this->params_list = new double_uv[au.params_list_len];
     for(size_t i = 0; i < au.params_list_len; ++i) {
         *(this->params_list+i) = *(au.params_list+i);
     }
@@ -126,10 +126,10 @@ AtomicUnit::~AtomicUnit(void) {
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-bool AtomicUnit::convert (double& value_in, int unit_index_out)
+bool AtomicUnit::convert (double_uv& value_in, int unit_index_out)
 {
     bool ret = false;
-    double sign = 1.0;
+    double_uv sign = 1.0;
     
     if ( (size_t)unit_index_out < len_units ) {
         if ( this->exponent != 0 ) {
@@ -173,13 +173,13 @@ bool AtomicUnit::sameUnits(const AtomicUnit * au) const {
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-void AtomicUnit::setParams(double * params, size_t params_len)
+void AtomicUnit::setParams(double_uv * params, size_t params_len)
 {
     if ( *params_list ) {
         delete [] params_list;
     }
     
-    params_list = new double[params_len];
+    params_list = new double_uv[params_len];
     
     memcpy(params_list, params, params_len);
 }
@@ -188,7 +188,7 @@ void AtomicUnit::setParams(double * params, size_t params_len)
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-const double * AtomicUnit::getParams(void)
+const double_uv * AtomicUnit::getParams(void)
 {
     return params_list;
 }
@@ -197,12 +197,12 @@ const double * AtomicUnit::getParams(void)
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-void AtomicUnit::setParam(double param, size_t index)
+void AtomicUnit::setParam(double_uv param, size_t index)
 {
-    double * params = params_list;
+    double_uv * params = params_list;
     size_t new_len = index+1;
     if ( new_len > params_list_len ) {
-        params = new double[new_len];
+        params = new double_uv[new_len];
         
         memcpy(params, params_list, new_len);
         
@@ -217,7 +217,7 @@ void AtomicUnit::setParam(double param, size_t index)
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-double AtomicUnit::getParam(size_t index)
+double_uv AtomicUnit::getParam(size_t index)
 {
     if ( index < params_list_len ) {
         return params_list[index];
@@ -388,7 +388,7 @@ UnitGroup::UnitGroup(void)
 ///         op - operator relation to other unit groups
 /// </parameters>
 ///-------------------------------------------------------------------------------------------------
-UnitGroup::UnitGroup(double val, AtomicUnit * unit, char op)
+UnitGroup::UnitGroup(double_uv val, AtomicUnit * unit, char op)
     : _oper(op), _val(val) {
     if ( unit != nullptr ) {
         std::string name = unit->getName();
@@ -400,7 +400,7 @@ UnitGroup::UnitGroup(double val, AtomicUnit * unit, char op)
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-UnitGroup::UnitGroup(double val, char oper, const MAP_ATOMIC_UNITS &units_in)
+UnitGroup::UnitGroup(double_uv val, char oper, const MAP_ATOMIC_UNITS &units_in)
     : _val(val), _oper(oper) {
     // remember that one can not simply copy MAP_ATOMIC_UNITS yet
     // one must clone each unit key-value pair
@@ -482,7 +482,7 @@ bool UnitGroup::areUnitsEqual(const MAP_ATOMIC_UNITS& units_in) const {
 ///-------------------------------------------------------------------------------------------------
 bool UnitGroup::foldInUnit(char oper, const UnitGroup &unit) {
     bool ret = true;
-    double conv_value = unit.getValue();
+    double_uv conv_value = unit.getValue();
     if ( unit.getUnits().size() && _units.size() ) {
         for(MAP_ATOMIC_UNITS::const_iterator iter = unit.getUnits().begin();
             iter != unit.getUnits().end();
@@ -554,7 +554,7 @@ bool UnitGroup::foldInUnit(char oper, const UnitGroup &unit) {
 ///-------------------------------------------------------------------------------------------------
 bool UnitGroup::sumUnits(char oper, const UnitGroup& unit) {
     bool ret = true;
-    double conv_value = unit.getValue();
+    double_uv conv_value = unit.getValue();
     
     if ( *this == unit ) {
         for(MAP_ATOMIC_UNITS::const_iterator iter = unit.getUnits().begin();
@@ -577,7 +577,7 @@ bool UnitGroup::sumUnits(char oper, const UnitGroup& unit) {
         }
     } // if ( *this == unit )
     else {
-        _val = double();
+        _val = double_uv();
         ret = false;
     }
     
@@ -589,7 +589,11 @@ bool UnitGroup::sumUnits(char oper, const UnitGroup& unit) {
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
 UnitGroup UnitGroup::pow(double exponent) const {
-    double new_val = ::pow(_val, exponent);
+ #ifdef UV_USE_LONG_DOUBLE
+    double_uv new_val = ::powl(_val, exponent);
+ #else   
+    double_uv new_val = ::pow(_val, exponent);
+#endif
     MAP_ATOMIC_UNITS new_units = this->_units;
     
     for(MAP_ATOMIC_UNITS::iterator iter = new_units.begin();
@@ -607,10 +611,16 @@ UnitGroup UnitGroup::pow(double exponent) const {
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
 UnitGroup UnitGroup::roundTo(unsigned int num_of_digits) const {
-    double top = log10(fabs(this->_val));
-    double cutoff = ::pow(10, int(num_of_digits-top-1));
+#ifdef UV_USE_LONG_DOUBLE   
+    double_uv top = log10l(fabs(this->_val));
+    double_uv cutoff = ::powl(10, int(num_of_digits-top-1));
+#else
+    double_uv top = log10(fabs(this->_val));
+    double_uv cutoff = ::pow(10, int(num_of_digits-top-1));
+#endif
     
-    double val = ::round(this->_val*cutoff)/cutoff;
+    
+    double_uv val = ::round(this->_val*cutoff)/cutoff;
     
     return UnitGroup(val, this->_oper, this->_units);
 }
@@ -636,11 +646,11 @@ UnitGroup UnitGroup::operator*(const UnitGroup& unit) const {
     return new_group;
 }
 ///-------------------------------------------------------------------------------------------------
-/// <summary>	Unit Group Multiplication Double. </summary>
+/// <summary>	Unit Group Multiplication double_uv. </summary>
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-UnitGroup UnitGroup::operator*(const double& val) const {
+UnitGroup UnitGroup::operator*(const double_uv& val) const {
     UnitGroup new_group(*this);
     
     new_group.foldInUnit('*', UnitGroup(val, nullptr));
@@ -671,11 +681,11 @@ UnitGroup UnitGroup::operator/(const UnitGroup& unit) const {
     return new_group;
 }
 ///-------------------------------------------------------------------------------------------------
-/// <summary>	Unit Group Division double. </summary>
+/// <summary>	Unit Group Division double_uv. </summary>
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-UnitGroup UnitGroup::operator/(const double& val) const {
+UnitGroup UnitGroup::operator/(const double_uv& val) const {
     UnitGroup new_group(*this);
     
     new_group.foldInUnit('*', UnitGroup(1/val, nullptr));
@@ -750,7 +760,7 @@ bool UnitGroup::operator!=(const UnitGroup& unit) const {
 ///-------------------------------------------------------------------------------------------------
 UnitGroup UnitGroup::operator[](const char * pszNewUnits) const {
     UnitGroup ng(*this);
-    double val_in = _val;
+    double_uv val_in = _val;
     for(MAP_ATOMIC_UNITS::const_iterator iter = ng.getUnits().begin();
         iter != ng.getUnits().end();
         ++iter)
@@ -788,7 +798,7 @@ void UnitGroup::setUnits(const MAP_ATOMIC_UNITS &units) {
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-double UnitGroup::getValue(void) const {
+double_uv UnitGroup::getValue(void) const {
     return _val;
 }
 ///-------------------------------------------------------------------------------------------------
@@ -796,7 +806,7 @@ double UnitGroup::getValue(void) const {
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-void UnitGroup::setValue(double value) {
+void UnitGroup::setValue(double_uv value) {
     _val = value;
 }
 ///-------------------------------------------------------------------------------------------------
@@ -942,7 +952,7 @@ UValue::UValue(void) : _exponent(1) {};
 ///         unit - Unit pointer (Unit Value will manage this object from now on.  Do not delete.)
 /// </parameters>
 ///-------------------------------------------------------------------------------------------------
-UValue::UValue(double init_val, AtomicUnit * unit)
+UValue::UValue(double_uv init_val, AtomicUnit * unit)
     : _exponent(1)
 {
     _units.push_back(UnitGroup(init_val, unit));
@@ -956,7 +966,7 @@ UValue::UValue(double init_val, AtomicUnit * unit)
 ///         unit - Unit pointer (Unit Value will manage this object from now on.  Do not delete.)
 /// </parameters>
 ///-------------------------------------------------------------------------------------------------
-UValue::UValue(double init_val, const LIST_UNIT_GROUP &group_in)
+UValue::UValue(double_uv init_val, const LIST_UNIT_GROUP &group_in)
     : _exponent(1) {
     _units = group_in;
     (*_units.begin()).setValue(init_val);
@@ -1007,8 +1017,8 @@ size_t UValue::numberOfTerms(void) const
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-double UValue::getValue(size_t termIndex) const {
-    double value = 0;
+double_uv UValue::getValue(size_t termIndex) const {
+    double_uv value = 0;
     if ( termIndex < _units.size() ) {
         LIST_UNIT_GROUP::const_iterator iter = _units.begin();
         std::advance(iter, termIndex);
@@ -1022,9 +1032,9 @@ double UValue::getValue(size_t termIndex) const {
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-std::list<double> UValue::getValues(void) const
+std::list<double_uv> UValue::getValues(void) const
 {
-	std::list<double> values;
+	std::list<double_uv> values;
     for( LIST_UNIT_GROUP::const_iterator iter = _units.begin();
         iter != _units.end();
         ++iter)
@@ -1039,7 +1049,7 @@ std::list<double> UValue::getValues(void) const
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-void UValue::setValue(double val)
+void UValue::setValue(double_uv val)
 {
     (*_units.begin()).setValue(val);
 }
@@ -1157,11 +1167,11 @@ UValue UValue::operator*(const UValue& val) const {
     return new_val;
 }
 ///-------------------------------------------------------------------------------------------------
-/// <summary>	Unit Value Multiplication Double. </summary>
+/// <summary>	Unit Value Multiplication double_uv. </summary>
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-UValue UValue::operator*(const double& val) const {
+UValue UValue::operator*(const double_uv& val) const {
     UValue new_value(*this);
     UValue factor(val);
     new_value.foldIntoUnits('*', factor);
@@ -1178,11 +1188,11 @@ UValue UValue::operator/(const UValue& val) const {
     return new_val;
 }
 ///-------------------------------------------------------------------------------------------------
-/// <summary>	Unit Value Division Double. </summary>
+/// <summary>	Unit Value Division double_uv. </summary>
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-UValue UValue::operator/(const double& val) const {
+UValue UValue::operator/(const double_uv& val) const {
     UValue new_value(*this);
     UValue factor(val);
     new_value.foldIntoUnits('/', factor);
@@ -1469,7 +1479,7 @@ bool UValue::sumInUnits(char oper, const UValue& units_in, bool simplify) {
     LIST_UNIT_GROUP units_copy = units_in.getUnits();
     bool ret = true;
     //bool added = false;
-    double value = 0;
+    double_uv value = 0;
     
     int i = 0;
     LIST_UNIT_GROUP::iterator * deleteList = new LIST_UNIT_GROUP::iterator[units_copy.size()];
@@ -1553,7 +1563,7 @@ void UValue::deleteAllUnits(void)
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-UValue operator*(double val1, const UValue& val2)
+UValue operator*(double_uv val1, const UValue& val2)
 {
 	return val2*val1;
 };
@@ -1562,7 +1572,7 @@ UValue operator*(double val1, const UValue& val2)
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-UValue operator+(double val1, const UValue& val2)
+UValue operator+(double_uv val1, const UValue& val2)
 {
 	return val2+val1;
 }
@@ -1571,7 +1581,7 @@ UValue operator+(double val1, const UValue& val2)
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-UValue operator-(double val1, const UValue& val2)
+UValue operator-(double_uv val1, const UValue& val2)
 {
 	return (val2*(-1))+val1;
 }
@@ -1580,7 +1590,7 @@ UValue operator-(double val1, const UValue& val2)
 ///
 /// <remarks>	Michael Ryan, 5/11/2012. </remarks>
 ///-------------------------------------------------------------------------------------------------
-UValue operator/(double val1, const UValue& val2) {
+UValue operator/(double_uv val1, const UValue& val2) {
 	UValue num(1.0);
     
 	return num/(val2/val1);

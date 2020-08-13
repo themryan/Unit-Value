@@ -5,6 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 # set the project name
 project(Unit-Value VERSION 0.1.0)
 
+add_definitions(-DUV_USE_LONG_DOUBLE)
+
 add_library(UValue
     SHARED
     include/UValue.hpp
@@ -37,4 +39,15 @@ add_dependencies(UnitsExample
 target_link_libraries(UnitsExample
     PRIVATE
     UValue
+)
+
+add_test(
+  NAME
+    TestMapping
+  COMMAND
+    "${CMAKE_CTEST_COMMAND}"
+             --build-and-test "${My_SOURCE_DIR}/tests/TestMapping.cpp"
+                              "${CMAKE_CURRENT_BINARY_DIR}/build"
+             --build-generator "${CMAKE_GENERATOR}"
+             --test-command "${CMAKE_CTEST_COMMAND}"
 )

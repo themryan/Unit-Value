@@ -33,7 +33,7 @@ int main(int argc, const char * argv[])
         }
         else {
             char * pEndNumber = nullptr;
-            double val = strtod(user_in.c_str(), &pEndNumber);
+            double_uv val = strtod(user_in.c_str(), &pEndNumber);
             
             if ( !pEndNumber || pEndNumber == user_in.c_str()
                 || val == HUGE_VAL || val == -HUGE_VAL ) {

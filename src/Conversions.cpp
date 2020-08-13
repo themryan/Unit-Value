@@ -44,10 +44,10 @@
 const char *const scalar[] = {""};
 
 // Does nothing except test for isnan
-bool IdentityConversion(double& value_in,
+bool IdentityConversion(double_uv& value_in,
                         int in,
                         int out,
-                        const double * params_list,
+                        const double_uv * params_list,
                         size_t params_list_len)
 {
 	return (!ISNAN(value_in));
@@ -61,14 +61,14 @@ const int freqs_len = sizeof(freqs)/sizeof(char *);
 /*
  Frequency Conversion engine
  */
-bool FreqConversion(double& value_in,
+bool FreqConversion(double_uv& value_in,
                            int in,
                            int out,
-                           const double * params_list,
+                           const double_uv * params_list,
                            size_t params_list_len)
 {
 	if ( in != out ) {
-		value_in = value_in*pow(10, 3*((double)in-(double)out));
+		value_in = value_in*pow(10, 3*((double_uv)in-(double_uv)out));
 	}
     
 	return (!ISNAN(value_in) );
@@ -85,9 +85,9 @@ const int ampls_len = sizeof(ampls)/sizeof(char *);
  Power Ratio Conversion engine
  */
 
-bool AmplConversion(double& value_in, int in, int out, const double * params_list, size_t params_list_len)
+bool AmplConversion(double_uv& value_in, int in, int out, const double_uv * params_list, size_t params_list_len)
 {
-	double impedance = 50; // Assuming 50 Ohms
+	double_uv impedance = 50; // Assuming 50 Ohms
     
 	if ( params_list && params_list_len > 0 ) {
 		impedance = *params_list;
@@ -175,7 +175,7 @@ bool AmplConversion(double& value_in, int in, int out, const double * params_lis
             case eUmV: // mV
             case eUV: // V
 			{
-                double conv = value_in + 10*log10(impedance);
+                double_uv conv = value_in + 10*log10(impedance);
                 if ( out == eUV ) {
                     conv -= 30.0;
                 }
@@ -185,7 +185,7 @@ bool AmplConversion(double& value_in, int in, int out, const double * params_lis
             case eUmW: // mW
             case eUW: // W
 			{
-                double conv = (value_in/10);
+                double_uv conv = (value_in/10);
                 if ( out == eUW ) {
                     conv -= 3;
                 }
@@ -195,7 +195,7 @@ bool AmplConversion(double& value_in, int in, int out, const double * params_lis
             case eUmA: // mA
             case eUA: // A
 			{
-                double conv = (value_in - (10*log10(impedance)));
+                double_uv conv = (value_in - (10*log10(impedance)));
                 if ( out == eUA ) {
                     conv -= 30;
                 }
@@ -217,20 +217,20 @@ const int times_len = sizeof(times)/sizeof(char *);
 /*
  Time Conversion engine
  */
-bool TimeConversion(double& value_in,
+bool TimeConversion(double_uv& value_in,
                            int in,
                            int out,
-                           const double * params_list,
+                           const double_uv * params_list,
                            size_t params_list_len)
 {
 	if ( in < 0 || out < 0 ) return false;
     
 	if ( in != out ) {
 		if ( in < 6 && out < 6 ) {
-			value_in = value_in*pow(10, 3*(((double)in-(double)out)));
+			value_in = value_in*pow(10, 3*(((double_uv)in-(double_uv)out)));
 		}
 		else {
-			double factors[] = {1.0, 1.0};
+			double_uv factors[] = {1.0, 1.0};
 			int indexes[] = { in, out };
             
 			for(int i = 0; i < 2; i++ ) {
@@ -242,11 +242,11 @@ bool TimeConversion(double& value_in,
                     case 3:
                     case 4:
                     case 5:
-                        factors[i] = pow(10, 3*((double)index-5.0));
+                        factors[i] = pow(10, 3*((double_uv)index-5.0));
                         break;
                     case 6:
                     case 7:
-                        factors[i] = pow(60, (double)index-5.0);
+                        factors[i] = pow(60, (double_uv)index-5.0);
                         break;
                     case 8:
                         factors[i] = 86400.0;
@@ -261,7 +261,7 @@ bool TimeConversion(double& value_in,
 				}
 			}
             
-			double ratio = factors[0]/factors[1];
+			double_uv ratio = factors[0]/factors[1];
 			value_in = ratio*value_in;
 		}
 	}
@@ -277,10 +277,10 @@ const int dists_len = sizeof(dists)/sizeof(char *);
 /*
  Distance Conversion engine
  */
-bool DistanceConversion(double& value_in, int in, int out, const double * params_list, size_t params_list_len)
+bool DistanceConversion(double_uv& value_in, int in, int out, const double_uv * params_list, size_t params_list_len)
 {
 	const int startEnglish = 10;
-    const double mfactors[] = {
+    const double_uv mfactors[] = {
         1e-15, // fm
         1e-10, // Angstrom
         1e-9, // nm
@@ -313,7 +313,7 @@ bool DistanceConversion(double& value_in, int in, int out, const double * params
         3.08567758e+16 // parsec
     };
     
-    const double efactors[] = {
+    const double_uv efactors[] = {
     	1/12000.0, //mil
 		1/768., // 1/64
 		1/384., // 1/32
@@ -332,14 +332,14 @@ bool DistanceConversion(double& value_in, int in, int out, const double * params
 		6000., // geo mile
 		18228.3552 // league
     };
-    const int endEnglish = (sizeof(efactors)/sizeof(double))+startEnglish-1;
+    const int endEnglish = (sizeof(efactors)/sizeof(double_uv))+startEnglish-1;
 
-    int mfactors_len = sizeof(mfactors)/sizeof(double);
+    int mfactors_len = sizeof(mfactors)/sizeof(double_uv);
     
 	if ( in < 0 || out < 0 || in > mfactors_len || out > mfactors_len ) return false;
     
 	if ( in != out ) {
-		double factor = 0;
+		double_uv factor = 0;
 		if(in >= startEnglish && in <= endEnglish
 				&& out >= startEnglish && out <= endEnglish) {
 			factor = efactors[in-startEnglish]/efactors[out-startEnglish];
@@ -360,7 +360,7 @@ const int temps_units_len = sizeof(temps_units)/sizeof(char *);
 /*
  Temp Conversion engine
  */
-bool TempConversion(double& value_in, int in, int out, const double * params_list, size_t params_list_len)
+bool TempConversion(double_uv& value_in, int in, int out, const double_uv * params_list, size_t params_list_len)
 {
 	if ( in != out ) {
 		switch(in) {
@@ -397,13 +397,13 @@ const int currents_len = sizeof(currents)/sizeof(char *);
  Current Conversion engine
  */
 
-bool CurrentConversion(double& value_in, int in, int out, const double * params_list, size_t params_list_len)
+bool CurrentConversion(double_uv& value_in, int in, int out, const double_uv * params_list, size_t params_list_len)
 {
-	double in_factor = 0;
-	double out_factor = 0;
+	double_uv in_factor = 0;
+	double_uv out_factor = 0;
     // nA, uA, mA, A, C/s, kA
-	const double factors[] = {-9, -6, -3, 0, 0, 3};
-    int factors_len = sizeof(factors)/sizeof(double);
+	const double_uv factors[] = {-9, -6, -3, 0, 0, 3};
+    int factors_len = sizeof(factors)/sizeof(double_uv);
     
 	if ( in != out ) {
 		if ( in >= 0 && in < factors_len ) {
@@ -428,12 +428,12 @@ const int volumes_len = sizeof(volumes)/sizeof(char *);
  Volume Conversion engine
  */
 
-bool VolumeConversion(double& value_in, int in, int out, const double * params_list, size_t params_list_len)
+bool VolumeConversion(double_uv& value_in, int in, int out, const double_uv * params_list, size_t params_list_len)
 {
-	double in_factor = 0;
-	double out_factor = 0;
+	double_uv in_factor = 0;
+	double_uv out_factor = 0;
     
-	const double factors[] = {
+	const double_uv factors[] = {
         .000001, // ml
         .000001, //cm^3
         .001, // l
@@ -466,7 +466,7 @@ bool VolumeConversion(double& value_in, int in, int out, const double * params_l
         8.8098e-3, // peck
         3.5239e-2 // bushel
     };
-    int factors_len = sizeof(factors)/sizeof(double);
+    int factors_len = sizeof(factors)/sizeof(double_uv);
     
 	if ( in != out ) {
 		if ( in >= 0 && in < factors_len ) {
@@ -491,12 +491,12 @@ const int masses_len = sizeof(masses)/sizeof(char *);
  Mass Conversion engine
  */
 
-bool MassConversion(double& value_in, int in, int out, const double * params_list, size_t params_list_len)
+bool MassConversion(double_uv& value_in, int in, int out, const double_uv * params_list, size_t params_list_len)
 {
-	double in_factor = 0;
-	double out_factor = 0;
+	double_uv in_factor = 0;
+	double_uv out_factor = 0;
     /* "mg", "g", "kg", "Mg", "t", "lb", "troy", "gr", "scruple", "pennyweight", "dram", "oz", "troy oz", "carat", "stone", "slug", "hundredweight", "ton", "long ton"*/
-	const double factors[] = {
+	const double_uv factors[] = {
         .001, // mg
         1, //g
         1000, // kg
@@ -519,7 +519,7 @@ bool MassConversion(double& value_in, int in, int out, const double * params_lis
         
     };
     
-    int factors_len = sizeof(factors)/sizeof(double);
+    int factors_len = sizeof(factors)/sizeof(double_uv);
     
 	if ( in != out ) {
 		if ( in >= 0 && in < factors_len ) {
@@ -544,13 +544,13 @@ const int forces_len = sizeof(forces)/sizeof(char *);
  Force Conversion engine
  */
 
-bool ForceConversion(double& value_in, int in, int out, const double * params_list, size_t params_list_len)
+bool ForceConversion(double_uv& value_in, int in, int out, const double_uv * params_list, size_t params_list_len)
 {
-	double in_factor = 0;
-	double out_factor = 0;
+	double_uv in_factor = 0;
+	double_uv out_factor = 0;
     /* "dyne", "N", "kg*m/s^2", "ozf", "lbf", "gmf", "kgf", "kip", "ton-force"*/
-	const double factors[] = {1e-5, 1, 1, .27801, 4.4482, 9806.65, 9.80665, 4448.2, 8896.4};
-    int factors_len = sizeof(factors)/sizeof(double);
+	const double_uv factors[] = {1e-5, 1, 1, .27801, 4.4482, 9806.65, 9.80665, 4448.2, 8896.4};
+    int factors_len = sizeof(factors)/sizeof(double_uv);
     
 	if ( in != out ) {
 		if ( in >= 0 && in < factors_len ) {
@@ -576,12 +576,12 @@ const int pressures_len = sizeof(pressures)/sizeof(char *);
  Pressure Conversion engine
  */
 
-bool PressureConversion(double& value_in, int in, int out, const double * params_list, size_t params_list_len)
+bool PressureConversion(double_uv& value_in, int in, int out, const double_uv * params_list, size_t params_list_len)
 {
-	double in_factor = 0;
-	double out_factor = 0;
+	double_uv in_factor = 0;
+	double_uv out_factor = 0;
 
-	const double factors[] = {
+	const double_uv factors[] = {
         .1, // dyne/cm^2
         1, // Pa
         133.3224, // torr
@@ -599,7 +599,7 @@ bool PressureConversion(double& value_in, int in, int out, const double * params
         6894.8, // lbf/in^2
         98066.5 // kgf/cm^2
     };
-    int factors_len = sizeof(factors)/sizeof(double);
+    int factors_len = sizeof(factors)/sizeof(double_uv);
     
 	if ( in != out ) {
 		if ( in >= 0 && in < factors_len ) {
@@ -625,12 +625,12 @@ const int energies_len = sizeof(energies)/sizeof(char *);
  Energy Conversion engine
  */
 
-bool EnergyConversion(double& value_in, int in, int out, const double * params_list, size_t params_list_len)
+bool EnergyConversion(double_uv& value_in, int in, int out, const double_uv * params_list, size_t params_list_len)
 {
-	double in_factor = 0;
-	double out_factor = 0;
+	double_uv in_factor = 0;
+	double_uv out_factor = 0;
     
-	const double factors[] = {
+	const double_uv factors[] = {
         1e-7, // erg
         4.184e+9, // ton TNT
 		.001, // mJ
@@ -650,7 +650,7 @@ bool EnergyConversion(double& value_in, int in, int out, const double * params_l
         1055.05585262, // Btu ST
         1e+18 // quad
     };
-    int factors_len = sizeof(factors)/sizeof(double);
+    int factors_len = sizeof(factors)/sizeof(double_uv);
     
 	if ( in != out ) {
 		if ( in >= 0 && in < factors_len ) {
@@ -675,12 +675,12 @@ const int powers_len = sizeof(powers)/sizeof(char *);
  Power Conversion engine
  */
 
-bool PowerConversion(double& value_in, int in, int out, const double * params_list, size_t params_list_len)
+bool PowerConversion(double_uv& value_in, int in, int out, const double_uv * params_list, size_t params_list_len)
 {
-	double in_factor = 0;
-	double out_factor = 0;
+	double_uv in_factor = 0;
+	double_uv out_factor = 0;
     
-	const double factors[] = {
+	const double_uv factors[] = {
         4.1868, // cal/s
         4.184, // cal th/s
         1e-7, // erg/s
@@ -695,7 +695,7 @@ bool PowerConversion(double& value_in, int in, int out, const double * params_li
         745.70, // hp
         746 // electric hp
     };
-    int factors_len = sizeof(factors)/sizeof(double);
+    int factors_len = sizeof(factors)/sizeof(double_uv);
     
 	if ( in != out ) {
 		if ( in >= 0 && in < factors_len ) {
@@ -720,12 +720,12 @@ const int angles_len = sizeof(angles)/sizeof(char *);
  Angle Conversion Engine
  */
 
-bool AngleConversion(double& value_in, int in, int out, const double * params_list, size_t params_list_len)
+bool AngleConversion(double_uv& value_in, int in, int out, const double_uv * params_list, size_t params_list_len)
 {
-    double in_factor = 0;
-    double out_factor = 0;
+    double_uv in_factor = 0;
+    double_uv out_factor = 0;
     
-    const double factors[] = {
+    const double_uv factors[] = {
     	1/6400.0, // mil
         1.0, // °
         1.0, // deg
@@ -738,7 +738,7 @@ bool AngleConversion(double& value_in, int in, int out, const double * params_li
         90./100. // grad
     };
     
-    int factors_len = sizeof(factors)/sizeof(double);
+    int factors_len = sizeof(factors)/sizeof(double_uv);
 
     if ( in >= factors_len || out >= factors_len ) return 0;
 

@@ -97,7 +97,7 @@ int main(int argc, const char * argv[])
                         std::cin.clear();
                         
                         char * endOfNumber = nullptr;
-                        double val_dbl = std::strtod(value_str.c_str(), &endOfNumber);
+                        double_uv val_dbl = std::strtod(value_str.c_str(), &endOfNumber);
                         if ( endOfNumber == value_str.c_str()
                             || endOfNumber == nullptr
                             || val_dbl == HUGE_VAL
