@@ -41,6 +41,12 @@
 
 #endif
 
+#ifdef UV_USE_LONG_DOUBLE
+#define POW(a,b)            powl(a,b)
+#else
+#define POW(a,b)            pow(a,b)
+#endif
+
 const char *const scalar[] = {""};
 
 // Does nothing except test for isnan
@@ -67,8 +73,10 @@ bool FreqConversion(double_uv& value_in,
                            const double_uv * params_list,
                            size_t params_list_len)
 {
+    if ( in < 0 || out < 0 ) return false;
+
 	if ( in != out ) {
-		value_in = value_in*pow(10, 3*((double_uv)in-(double_uv)out));
+		value_in = value_in*POW(10, 3*((double_uv)in-(double_uv)out));
 	}
     
 	return (!ISNAN(value_in) );
@@ -88,6 +96,8 @@ const int ampls_len = sizeof(ampls)/sizeof(char *);
 bool AmplConversion(double_uv& value_in, int in, int out, const double_uv * params_list, size_t params_list_len)
 {
 	double_uv impedance = 50; // Assuming 50 Ohms
+
+    if ( in < 0 || out < 0 ) return false;
     
 	if ( params_list && params_list_len > 0 ) {
 		impedance = *params_list;
@@ -179,7 +189,7 @@ bool AmplConversion(double_uv& value_in, int in, int out, const double_uv * para
                 if ( out == eUV ) {
                     conv -= 30.0;
                 }
-                value_in = pow(10, conv/20);
+                value_in = POW(10, conv/20);
                 break;
 			}
             case eUmW: // mW
@@ -189,7 +199,7 @@ bool AmplConversion(double_uv& value_in, int in, int out, const double_uv * para
                 if ( out == eUW ) {
                     conv -= 3;
                 }
-                value_in = pow(10, conv);
+                value_in = POW(10, conv);
                 break;
 			}
             case eUmA: // mA
@@ -199,7 +209,7 @@ bool AmplConversion(double_uv& value_in, int in, int out, const double_uv * para
                 if ( out == eUA ) {
                     conv -= 30;
                 }
-                value_in = pow(10, conv/20);
+                value_in = POW(10, conv/20);
                 break;
 			}
 		}
@@ -227,7 +237,7 @@ bool TimeConversion(double_uv& value_in,
     
 	if ( in != out ) {
 		if ( in < 6 && out < 6 ) {
-			value_in = value_in*pow(10, 3*(((double_uv)in-(double_uv)out)));
+            value_in = value_in*POW(10, 3.0*(((double_uv)in-(double_uv)out)));
 		}
 		else {
 			double_uv factors[] = {1.0, 1.0};
@@ -242,11 +252,11 @@ bool TimeConversion(double_uv& value_in,
                     case 3:
                     case 4:
                     case 5:
-                        factors[i] = pow(10, 3*((double_uv)index-5.0));
+                        factors[i] = POW(10, 3.0*((double_uv)index-5.0));
                         break;
                     case 6:
                     case 7:
-                        factors[i] = pow(60, (double_uv)index-5.0);
+                        factors[i] = POW(60, (double_uv)index-5.0);
                         break;
                     case 8:
                         factors[i] = 86400.0;
@@ -256,7 +266,7 @@ bool TimeConversion(double_uv& value_in,
                         factors[i] = (7*86400.0);
                         break;
                     case 11:
-                        factors[i] = pow(10, 3*(-2.0));
+                        factors[i] = POW(10, 3*(-2.0));
                         break;
 				}
 			}
@@ -264,7 +274,7 @@ bool TimeConversion(double_uv& value_in,
 			double_uv ratio = factors[0]/factors[1];
 			value_in = ratio*value_in;
 		}
-	}
+	} // in != out
     
 	return (!ISNAN(value_in) );
 };
@@ -414,14 +424,14 @@ bool CurrentConversion(double_uv& value_in, int in, int out, const double_uv * p
 			out_factor = factors[out];
 		}
         
-		value_in = value_in/pow(10.0, out_factor-in_factor);
+		value_in = value_in/POW(10.0, out_factor-in_factor);
 	}
     
 	return !(ISNAN(value_in));
 }
 
 /* Volume Units */
-const char *const volumes[] = {"ml", "cm^3", "l", "m^3", "stere", "ft^3", "in^3", "board ft", "acre-ft", "dram", "drop", "tsp", "tbsp", "oz", "jigger", "gill", "cup", "pt", "fifth", "qt", "gal", "wbbl" /* wine barrel*/, "bbl" /* barrel  US 42*/, "UK oz", "UK gill", "UK gal", "dry pt", "dry qt", "dry gal", "peck", "bushel"};
+const char *const volumes[] = {"ml", "cm^3", "l", "m^3", "stere", "ft^3", "in^3", "board ft", "acre-ft", "drop", "fifth", "dram", "tsp", "tbsp", "oz", "jigger", "gill", "cup", "pt", "qt", "gal", "wbbl" /* wine barrel*/, "bbl" /* barrel  US 42*/, "UK oz", "UK cup", "UK gill", "UK gal", "dry pt", "dry qt", "dry gal", "peck", "bushel"};
 const int volumes_len = sizeof(volumes)/sizeof(char *);
 
 /*
@@ -443,21 +453,22 @@ bool VolumeConversion(double_uv& value_in, int in, int out, const double_uv * pa
         1.6387e-5, // in^3
         2.3597e-3, // board ft
         1233.48, // acre-ft
-        3.6967e-6, // dram
         5e-8, // drop
+        .00075,    // fifth (metric 750ml)
+        3.6967e-6, // dram
         4.9288e-6, // tsp
         1.4787e-5, // tbsp
-        2.9574e-5, // oz
+        2.9574e-5, // fl oz
         4.4361e-5, // jigger
         1.1829e-4, // gill
         2.3659e-4, // cup
         4.7318e-4, // pt
-        .00075,    // fifth (metric 750ml)
         9.4635e-4, // qt
         3.7854e-3, // gal
         .119240, //wbbl - Wine barrel
         0.1589868, //bbl
         2.8413e-5, //UK oz
+        2.27304e-4, // UK cup
         1.4206e-4, // UK gill
         4.54609e-3, // UK gal
         5.5061e-4, // dry pt
@@ -466,19 +477,42 @@ bool VolumeConversion(double_uv& value_in, int in, int out, const double_uv * pa
         8.8098e-3, // peck
         3.5239e-2 // bushel
     };
+
+    const double_uv en_factors[] = {
+        64., //dram
+        48., // tsp
+        16., // tbsp
+        8., // oz
+        5.333333333333, // jigger
+        2., // gill
+        1., // cup
+        .5, // pint
+        .25, // qt
+        1./16., // gal
+    };
+
+    const int en_factors_offset = 11;
+
     int factors_len = sizeof(factors)/sizeof(double_uv);
-    
-	if ( in != out ) {
-		if ( in >= 0 && in < factors_len ) {
-			in_factor = factors[in];
-		}
-        
-		if ( out >= 0 && out < factors_len ) {
-			out_factor = factors[out];
-		}
-        
-        value_in = (in_factor*value_in)/out_factor;
-	}
+
+    if( in >= en_factors_offset && in <= 20 && out >= en_factors_offset && out <= 20 )
+    {
+        value_in = en_factors[out-en_factors_offset]*value_in/en_factors[in-en_factors_offset];
+    }
+    else
+    {
+        if ( in != out ) {
+            if ( in >= 0 && in < factors_len ) {
+                in_factor = factors[in];
+            }
+            
+            if ( out >= 0 && out < factors_len ) {
+                out_factor = factors[out];
+            }
+            
+            value_in = (in_factor*value_in)/out_factor;
+        }
+    }
     
 	return !(ISNAN(value_in));
 }
