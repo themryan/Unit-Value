@@ -177,8 +177,62 @@ int main()
     /* Volume Units */
     val = 1.0;
     test_name = "Volume Conversion";
-    // const char *const volumes[] = {"ml", "cm^3", "l", "m^3", "stere", "ft^3", "in^3", "board ft", "acre-ft", "drop", "fifth", "dram", "tsp", "tbsp", "oz", "jigger", "gill", "cup", "pt", "qt", "gal", "wbbl" /* wine barrel*/, "bbl" /* barrel  US 42*/, "UK oz", "UK cup", "UK gill", "UK gal", "dry pt", "dry qt", "dry gal", "peck", "bushel"};
-    const double_uv volume_vals_valid[] = { 1e+6, 1e+6, 1e+3, 1.0, 1.0, 35.3147, 61024, 423.783, 0.000810714, 2e+7, 1333.3333333, 270512.0, 202889, 67627, 33813.5, 22542.3, 8453.8, 4226.72, 2113.36, 1056.69, 264.173, 8.38645, 6.28983, 35195.2, 4399.39, 7039.28, 219.969, 1816.17, 908.1, 227.02, 113.51, 28.3776 };
+    /* const char *const volumes[] = {"ml", "cm^3", "l", "m^3", "stere", "ft^3", "in^3", "board ft", "acre-ft", 
+        "drop", "fifth", "dram", "tsp", "tbsp", "jigger", "oz", 
+        "gill", "cup", "pt", "qt", "gal", "wbbl", "bbl", "Imp dram",
+        "Imp tsp", "Imp tbsp", "Imp jigger", "Imp fl oz", "Imp gill", "Imp cup", "Imp pt", "Imp qt", "Imp gal", 
+        "metric dram", "metric tsp", "metric tbsp", "metric jigger", "metric cup", "AU tbsp", "JP cup",
+        "UK gill", "dry pt", "dry qt", "dry gal", "peck", "bushel"}; */
+
+        const double_uv volume_vals_valid[] = { 
+            1e+06, // ml
+            1e+06, // cm^3
+            1000, // l
+            1, // m^3
+            1, // stere
+            35.3147, // ft^3
+            61024, // in^3
+            423.783, // (board ft)
+            0.000810714, // acre-ft
+            2e+07, // drop
+            1333.33, // fifth
+            270512, // dram
+            202889, // tsp
+            67627, // tbsp
+            22542.3, // jigger
+            33813.5, // oz
+            8453.8, // gill
+            4226.72, // cup
+            2113.36, // pt
+            1056.69, // qt
+            264.173, // gal
+            8.38645, // wbbl
+            6.28983, // bbl
+            281690, // (Imp dram)
+            168936, // (Imp tsp)
+            56312, // (Imp tbsp)
+            28571.4, // (Imp jigger)
+            35195.2, // (Imp fl oz)
+            12500, // (Imp gill)
+            3519.5, // (Imp cup)
+            1759.75, // (Imp pt)
+            879.877, // (Imp qt)
+            219.969, // (Imp gal)
+            333333, // (metric dram)
+            200000, // (metric tsp)
+            66666.7, // (metric tbsp)
+            40000, // (metric jigger)
+            4000, // (metric cup)
+            50000, // (AU tbsp)
+            5000, // (JP cup)
+            7039.28, // (UK gill)
+            1816.17, // (dry pt)
+            908.1, // (dry qt)
+            227.02, // (dry gal)
+            113.51, // peck
+            28.3776 // bushel    
+        };
+
     if( !standard_test(val, VolumeConversion, volume_vals_valid, volumes_len, 3, index, max_diff) )
     {
         return failed_test(test_name, index, val);
@@ -258,6 +312,47 @@ int main()
     // const char *const angles[] = { "mil", "°", "deg", "'", "min", "\"", "sec",  "'''", "rad", "grad"};
     const double_uv angle_vals_valid[] = { 6400, 1, 1, 1, 60, 60, 3600, 3600, 0.0174533, 1.11111 };
     if( !standard_test(val, AngleConversion, angle_vals_valid, angles_len, 2, index, max_diff) )
+    {
+        return failed_test(test_name, index, val);
+    }
+
+    std::cout << SUCCESS_COLOR << test_name << " passed " << NOMINAL_COLOR << std::endl;
+    std::cout << YELLOW_COLOR << test_name << " had max error between expected and measured " << max_diff << NOMINAL_COLOR << std::endl;
+
+    /* Area Units */
+    val = 1.0;
+    test_name = "Area Conversion";
+    // const char *const areas[] = { "ab", "fb", "pb", "nb", "µb", "um", "mb", "barn", "kb", "Mb", "sq mm", "sq cm", "sq m", "sq km", "Hectacre", "myriad", "sq mil", "sq in", "sq ft", "square", "sq yard", "acre", "sq mi", "sq survey mi", "section", "survey township" };
+    const double_uv area_vals_valid[] = { 
+        1e+46, // ab
+        1e+43, // fb
+        1e+40, // pb
+        1e+37, // nb
+        1e+34, // µb
+        1e+34, // um
+        1e+31, // mb
+        1e+28, // barn
+        1e+25, // kb
+        1e+22, // Mb
+        1e+06, // (sq mm)
+        10000, // (sq cm)
+        1, // (sq m)
+        1e-06, // (sq km)
+        0.0001, // Hectacre
+        1e-10, // myriad
+        1.55e+09, // (sq mil)
+        1550, // (sq in)
+        10.7639, // (sq ft)
+        10.7639, // square
+        1.19599, // (sq yard)
+        0.000247105, // acre
+        3.86102e-07, // (sq mi)
+        3.86101e-07, // (sq survey mi)
+        3.86102e-07, // section
+        1.0725e-08, // (survey township)
+    };
+    
+    if( !standard_test(val, AreaConversion, area_vals_valid, areas_len, 12, index, max_diff) )
     {
         return failed_test(test_name, index, val);
     }

@@ -229,5 +229,18 @@ bool AngleConversion(double_uv& value_in,
                      const double_uv * params_list,
                      size_t params_list_len);
 
+extern const char *const areas[];
+extern const int areas_len;
+
+/*
+ Area Conversion engine
+ */
+
+bool AreaConversion(double_uv& value_in,
+                     int in,
+                     int out,
+                     const double_uv * params_list,
+                     size_t params_list_len);
+
 
 #endif // __CONVERSIONS_H__

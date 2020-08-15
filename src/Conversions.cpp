@@ -431,7 +431,12 @@ bool CurrentConversion(double_uv& value_in, int in, int out, const double_uv * p
 }
 
 /* Volume Units */
-const char *const volumes[] = {"ml", "cm^3", "l", "m^3", "stere", "ft^3", "in^3", "board ft", "acre-ft", "drop", "fifth", "dram", "tsp", "tbsp", "oz", "jigger", "gill", "cup", "pt", "qt", "gal", "wbbl" /* wine barrel*/, "bbl" /* barrel  US 42*/, "UK oz", "UK cup", "UK gill", "UK gal", "dry pt", "dry qt", "dry gal", "peck", "bushel"};
+const char *const volumes[] = {"ml", "cm^3", "l", "m^3", "stere", "ft^3", "in^3", "board ft", "acre-ft", 
+"drop", "fifth", "dram", "tsp", "tbsp", "jigger", "oz", 
+"gill", "cup", "pt", "qt", "gal", "wbbl" /* wine barrel*/, "bbl" /* barrel  US 42*/, "Imp dram",
+"Imp tsp", "Imp tbsp", "Imp jigger", "Imp fl oz", "Imp gill", "Imp cup", "Imp pt", "Imp qt", "Imp gal", 
+"metric dram", "metric tsp", "metric tbsp", "metric jigger", "metric cup", "AU tbsp", "JP cup",
+"UK gill", "dry pt", "dry qt", "dry gal", "peck", "bushel"};
 const int volumes_len = sizeof(volumes)/sizeof(char *);
 
 /*
@@ -458,8 +463,8 @@ bool VolumeConversion(double_uv& value_in, int in, int out, const double_uv * pa
         3.6967e-6, // dram
         4.9288e-6, // tsp
         1.4787e-5, // tbsp
-        2.9574e-5, // fl oz
         4.4361e-5, // jigger
+        2.9574e-5, // fl oz
         1.1829e-4, // gill
         2.3659e-4, // cup
         4.7318e-4, // pt
@@ -467,10 +472,27 @@ bool VolumeConversion(double_uv& value_in, int in, int out, const double_uv * pa
         3.7854e-3, // gal
         .119240, //wbbl - Wine barrel
         0.1589868, //bbl
-        2.8413e-5, //UK oz
-        2.27304e-4, // UK cup
+        0.00000355, // Imp dram
+        5.91939e-6, // Imp teaspoon 5 ml
+        0.0000177582, // Imp tbsp 15 ml
+        0.000035, // Imp jigger
+        2.8413e-5, //Imp oz
+        0.00008, // Imp gill
+        0.000284131, // Imp cup
+        0.000568261, // Imp pt
+        0.00113652200004375, // Imp qt
+        0.00454609, // Imp gal
+
+        0.000003, // metric dram
+        0.000005, // metric teaspoon 5 ml
+        0.000015, // metric tbsp 15 ml
+        0.000025, // metric jigger
+        0.00025, // UK - EU cup 250 ml
+
+        0.00002, // AU tbsp 20 ml
+        0.0002, // Japan cup 200 ml
+        //2.27304e-4, // Imperial cup
         1.4206e-4, // UK gill
-        4.54609e-3, // UK gal
         5.5061e-4, // dry pt
         1.1012e-3, // dry qt
         4.4049e-3, // dry gal
@@ -482,22 +504,27 @@ bool VolumeConversion(double_uv& value_in, int in, int out, const double_uv * pa
         64., //dram
         48., // tsp
         16., // tbsp
+        5.3333333333333, // jigger - 3 tbsp        
         8., // oz
-        5.333333333333, // jigger
-        2., // gill
+        2., // gill - 8 tbsp
         1., // cup
         .5, // pint
         .25, // qt
         1./16., // gal
     };
 
-    const int en_factors_offset = 11;
+    const int en_us_factors_offset = 11;
+    const int en_uk_factors_offset = 23;
 
     int factors_len = sizeof(factors)/sizeof(double_uv);
 
-    if( in >= en_factors_offset && in <= 20 && out >= en_factors_offset && out <= 20 )
+    if( in >= en_us_factors_offset && in <= 20 && out >= en_us_factors_offset && out <= 20 )
     {
-        value_in = en_factors[out-en_factors_offset]*value_in/en_factors[in-en_factors_offset];
+        value_in = en_factors[out-en_us_factors_offset]*value_in/en_factors[in-en_us_factors_offset];
+    }
+    else if( in >= en_uk_factors_offset && in <= 20 && out >= en_uk_factors_offset && out <= 20 )
+    {
+        value_in = en_factors[out-en_uk_factors_offset]*value_in/en_factors[in-en_uk_factors_offset];
     }
     else
     {
@@ -787,6 +814,91 @@ bool AngleConversion(double_uv& value_in, int in, int out, const double_uv * par
         
         value_in = (in_factor*value_in)/out_factor;
     }
+    
+    return !(ISNAN(value_in));
+}
+
+/* Area Units */
+const char *const areas[] = { "ab", "fb", "pb", "nb", "µb", "um", "mb", "barn", "kb", "Mb", "sq mm", "sq cm", "sq m", "sq km", "Hectacre", "myriad", "sq mil", "sq in", "sq ft", "square", "sq yard", "acre", "sq mi", "sq survey mi", "section", "survey township" };
+const int areas_len = sizeof(areas)/sizeof(char *);
+
+/* Area Conversion Engine */
+
+bool AreaConversion(double_uv& value_in, int in, int out, const double_uv * params_list, size_t params_list_len)
+{
+    double_uv in_factor = 0;
+    double_uv out_factor = 0;
+    double_uv factor = 1.0;
+    
+    const double_uv factors[] = {
+        1e-46, // ab
+        1e-43,// fb
+        1e-40, // pb
+        1e-37, // nb
+        1e-34, // µb
+        1e-34, // ub
+        1e-31, // mb
+        1e-28, // barn", 
+        1e-25, // kb,
+        1e-22,// Mb
+        1e-6, // sq mm", 
+        1e-4, // sq cm", 
+        1., // sq m", 
+        1e+6, // sq km", 
+        1e+4, // Hectacre",
+        1e+10, // myriad",   
+        6.4516e-10, // sq mil", 
+        0.00064516, // sq in", 
+        0.092903, // sq ft", 
+        0.092903, // square", 
+        0.836127, // sq yard", 
+        4046.86, // Acre",
+        2.589988110336e+6, // sq mi", 
+        2.58999810e+6, // sq survey mile
+        2589988.10,  // section", 
+        9.323994e+7, // survey township
+    };
+
+    // reference square ft
+    const double_uv en_factors[] = {
+        (1./(144.))*0.000001,// sq mil
+        1./144.,// sq in
+        1, // sq ft
+        1, // square
+        9., // sq yd
+        43560., // Acre
+        27878400., // sq mile
+        27878294.4001, // sq survey miles
+        27878294.4001, // section
+        1003618598.4036, // survey township
+    };
+     
+    int factors_len = sizeof(factors)/sizeof(double_uv);
+
+    const int en_factors_start = 16;
+    const int en_factors_end = 25;
+
+    if ( in >= factors_len || in < 0 || out >= factors_len || out < 0 ) return 0;
+
+    // check if English units only
+    if( in >= en_factors_start && in <= en_factors_end 
+        && out >= en_factors_start && out <= en_factors_end )
+    {
+        factor = en_factors[in - en_factors_start]/en_factors[out - en_factors_start];
+    }
+    else if (in != out) {
+        if ( in >= 0 ) {
+            in_factor = factors[in];
+        }
+        
+        if ( out >= 0 ) {
+            out_factor = factors[out];
+        }
+        
+        factor = in_factor/out_factor;
+    }
+
+    value_in = value_in * factor;
     
     return !(ISNAN(value_in));
 }

@@ -33,8 +33,8 @@ int main(int argc, const char * argv[])
         int c_index = 0;
         const char * choices[] = {"Amplitude (Rel. Log) Unit", "Distance Unit", "Frequency Unit",
             "Time Unit", "Temperature Unit", "Electrical Current Unit", "Volume Unit",
-            "Mass Unit", "Force Unit", "Pressure Unit", "Energy Unit", "Power Unit", "Angle Units"};
-        const char * def_units[] = { "dBm '50 Ohm Impedance'", "m", "MHz", "s", "C", "A", "m^3", "g", "N", "Pa", "J", "W", "deg" };
+            "Mass Unit", "Force Unit", "Pressure Unit", "Energy Unit", "Power Unit", "Angle Units" , "Area Units"};
+        const char * def_units[] = { "dBm '50 Ohm Impedance'", "m", "MHz", "s", "C", "A", "m^3", "g", "N", "Pa", "J", "W", "deg", "sq m" };
         std::cout << "Choose a unit:" << std::endl;
         for(int i = 0; i < sizeof(choices)/sizeof(char *)-1; i++) {
             std::cout << index++ << ". " << choices[c_index++] << std::endl;
@@ -356,6 +356,24 @@ int main(int argc, const char * argv[])
 									unit = AngleUnit::getUnits();
 									break;
 
+                                case 14:
+									if ( units_str.length() && !AreaUnit::isAllowableUnit(units_str.c_str()) )
+									{
+										std::cout << "'" << units_str << "' is not an allowable abbrev of " << choices[c-1];
+										std::cout << std::endl;
+                                        print_allowable_units(AreaUnit::getUnits(), AreaUnit::getUnitsLen());
+										units_str = "sq m";
+                                        continue;
+									}
+									else if ( !units_str.length() )
+									{
+										units_str = "sq m";
+									}
+
+									val = UValue(val_dbl, new AreaUnit(units_str.c_str()));
+									num_conv = AreaUnit::getUnitsLen();
+									unit = AreaUnit::getUnits();
+									break;
                             }
                             
                             std::cout << std::endl;

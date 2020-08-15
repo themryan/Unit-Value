@@ -1179,5 +1179,30 @@ public:
     STATIC_UNIT_MTHDS(pUNit, angles, angles_len);
 };
 
+///-------------------------------------------------------------------------------------------------
+/// <summary>	Area Unit. </summary>
+///
+/// <remarks>	Michael Ryan, 8/14/2020. </remarks>
+///-------------------------------------------------------------------------------------------------
+class AreaUnit
+: public AtomicUnit
+{
+public:
+    AreaUnit(const char * cur_units="sq m")
+    : AtomicUnit(areas, areas_len, AreaConversion, cur_units, "sq m")
+    {
+    }
+    
+    AreaUnit * create(void)
+    {
+        return new AreaUnit();
+    }
+    AreaUnit * clone(void) const
+    {
+        return new AreaUnit(*this);
+    }
+    STATIC_UNIT_MTHDS(pUNit, areas, areas_len);
+};
+
 
 #endif //__UVALUE_H__
